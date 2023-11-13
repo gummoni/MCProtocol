@@ -31,9 +31,7 @@ namespace MCProtocol
                     if (string.IsNullOrEmpty(line)) continue;
                     var rows = line.Split(',');
                     if (rows is null) return;
-                    if (2 > rows.Length) continue;
-                    if (rows[0] == null) return;
-                    if (rows[1] == null) return;
+                    if (string.IsNullOrEmpty(rows[0])) return;
                     switch (rows[0])
                     {
                         case "INIT":
