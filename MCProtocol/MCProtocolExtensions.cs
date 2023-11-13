@@ -2,16 +2,25 @@
 {
     public static class MCProtocolExtensions
     {
+        static int Conv(int adr)
+        {
+            var l = adr / 100;
+            var k = adr % 100;
+            var c = k / 16;
+            var h = k % 16;
+            return (l + c) * 100 + h;
+        }
+
         public static byte GetByte(this Dictionary<int, bool> dic, int adr)
         {
-            var b0 = dic.TryGetValue(adr + 0, out bool _b0) && _b0 ? 0x01 : 0x00;
-            var b1 = dic.TryGetValue(adr + 1, out bool _b1) && _b1 ? 0x02 : 0x00;
-            var b2 = dic.TryGetValue(adr + 2, out bool _b2) && _b2 ? 0x04 : 0x00;
-            var b3 = dic.TryGetValue(adr + 3, out bool _b3) && _b3 ? 0x08 : 0x00;
-            var b4 = dic.TryGetValue(adr + 4, out bool _b4) && _b4 ? 0x10 : 0x00;
-            var b5 = dic.TryGetValue(adr + 5, out bool _b5) && _b5 ? 0x20 : 0x00;
-            var b6 = dic.TryGetValue(adr + 6, out bool _b6) && _b6 ? 0x40 : 0x00;
-            var b7 = dic.TryGetValue(adr + 7, out bool _b7) && _b7 ? 0x80 : 0x00;
+            var b0 = dic.TryGetValue(Conv(adr + 0), out bool _b0) && _b0 ? 0x01 : 0x00;
+            var b1 = dic.TryGetValue(Conv(adr + 1), out bool _b1) && _b1 ? 0x02 : 0x00;
+            var b2 = dic.TryGetValue(Conv(adr + 2), out bool _b2) && _b2 ? 0x04 : 0x00;
+            var b3 = dic.TryGetValue(Conv(adr + 3), out bool _b3) && _b3 ? 0x08 : 0x00;
+            var b4 = dic.TryGetValue(Conv(adr + 4), out bool _b4) && _b4 ? 0x10 : 0x00;
+            var b5 = dic.TryGetValue(Conv(adr + 5), out bool _b5) && _b5 ? 0x20 : 0x00;
+            var b6 = dic.TryGetValue(Conv(adr + 6), out bool _b6) && _b6 ? 0x40 : 0x00;
+            var b7 = dic.TryGetValue(Conv(adr + 7), out bool _b7) && _b7 ? 0x80 : 0x00;
             return (byte)(b7 | b6 | b5 | b4 | b3 | b2 | b1 | b0);
         }
 
