@@ -1,9 +1,11 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
 
 namespace MCProtocol
 {
     public static class Processor
     {
+        readonly static ConcurrentBag<string> IgnoreFilenames = new();
         public static void Execute(PLCDevice plc, string path)
         {
             var files = Directory.GetFiles(path, "*.csv", SearchOption.AllDirectories);
@@ -17,6 +19,9 @@ namespace MCProtocol
         {
             return Task.Run(() =>
             {
+                if (IgnoreFilenames.Contains(filename))
+                    return;
+
                 var lines = File.ReadAllLines(filename)
                     .Select(_ => Regex.Replace(_, "[ 　\t]", ""))
                     .Select(_ => Regex.Replace(_, ";.*$", "").ToUpper());
@@ -31,6 +36,10 @@ namespace MCProtocol
                     if (rows[1] == null) return;
                     switch (rows[0])
                     {
+                        case "INIT":
+                            IgnoreFilenames.Add(filename);
+                            break;
+
                         case "TRIG":
                             switch (rows[1])
                             {
