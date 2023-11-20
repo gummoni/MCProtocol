@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace MCProtocol
 {
@@ -116,9 +117,17 @@ namespace MCProtocol
 
         public static byte[] SetWord(this ConcurrentDictionary<int, ushort> dic, int adr, int len, byte[] dat)
         {
-            for (var idx = 0; idx < len; idx++)
+            var cnt = 0;
+            try
             {
-                dic[adr + idx] = (ushort)((dat[idx * 2 + 1] << 8) | (dat[idx * 2 + 0]));
+                for (var idx = 0; idx < len / 2; idx++, cnt++)
+                {
+                    dic[adr + cnt] = (ushort)((dat[idx * 2 + 1] << 8) | (dat[idx * 2 + 0]));
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
 
             return Array.Empty<byte>();
