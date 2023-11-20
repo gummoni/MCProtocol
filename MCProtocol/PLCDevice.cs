@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace MCProtocol
 {
@@ -11,14 +11,50 @@ namespace MCProtocol
     /// </summary>
     public class PLCDevice
     {
-        public readonly Dictionary<int, bool> R = new();
-        public readonly Dictionary<int, bool> MR = new();
-        public readonly Dictionary<int, ushort> DM = new();
+        public readonly ConcurrentDictionary<int, bool> R = new();
+        public readonly ConcurrentDictionary<int, bool> MR = new();
+        public readonly ConcurrentDictionary<int, ushort> DM = new();
         readonly Task DoTask;
         public bool IsFinished => DoTask.IsCompleted;
 
-        public PLCDevice(int port)
+        void Test()
         {
+#if true
+            //ビット操作の確認
+            R.SetBit(1000, 1, new byte[] { 0x10 });
+            R.SetBit(1001, 2, new byte[] { 0x01 });
+            R.SetBit(1003, 2, new byte[] { 0x11 });
+            var ret1 = R.GetBit(1000, 1);
+            var ret2 = R.GetBit(1001, 1);
+            var ret3 = R.GetBit(1000, 5);
+
+            //ワード操作の確認
+            R.SetWord(2000, 2, new[] { (byte)0xAB, (byte)0x12, (byte)0x34, (byte)0xCD });
+            var ret4 = R.GetWord(2000, 2);
+            var keys = R.Keys.ToList();
+            keys.Sort();
+            foreach (var key in keys)
+            {
+                var flg = R[key] ? "●" : "－";
+                Debug.WriteLine($"{key}:{flg}");
+            }
+            var ret5 = R.GetBit(2000, 32);
+
+            //DM操作の確認
+            DM.SetWord(2000, 2, new[] { (byte)0xAB, (byte)0x12, (byte)0x34, (byte)0xCD });
+            var ret6 = DM.GetWord(2000, 2);
+
+            //Thread.Sleep(1000);
+            //var ret7 = MR[100];
+#endif
+        }
+
+        readonly IUIUpdatable Updatable;
+        public PLCDevice(int port, IUIUpdatable updatable)
+        {
+            Updatable = updatable;
+            Processor.Execute(this);
+            Test();
             DoTask = Start(port);
         }
 
@@ -31,6 +67,7 @@ namespace MCProtocol
 
                 while (true)
                 {
+                    Updatable.UpdateConnect(ListenPacket.Count);
                     new ListenPacket(listener.AcceptSocket(), RecieveAndResponse).Start();
                 }
             });
@@ -97,35 +134,35 @@ namespace MCProtocol
                     {
                         var resp = R.GetWord(adr, len);
                         var body = string.Join(" ", resp.Select(_ => _.ToString("X2")));
-                        Debug.WriteLine($"Read:  R  adr={adr}, len={len}, dat={body}");
+                        Updatable.AddCommLog($"Read:  R  adr={adr}, len={len}, dat={body}");
                         return resp;
                     }
                     if (dev == 0x9c && sub == 1)
                     {
                         var resp = R.GetBit(adr, len);
                         var body = string.Join(" ", resp.Select(_ => _.ToString("X2")));
-                        Debug.WriteLine($"Read:  R  adr={adr}, len={len}, dat={body}");
+                        Updatable.AddCommLog($"Read:  R  adr={adr}, len={len}, dat={body}");
                         return resp;
                     }
                     if (dev == 0x90 && sub == 0)
                     {
                         var resp = MR.GetWord(adr, len);
                         var body = string.Join(" ", resp.Select(_ => _.ToString("X2")));
-                        Debug.WriteLine($"Read: MR  adr={adr}, len={len}, dat={body}");
+                        Updatable.AddCommLog($"Read: MR  adr={adr}, len={len}, dat={body}");
                         return resp;
                     }
                     if (dev == 0x90 && sub == 1)
                     {
                         var resp = MR.GetBit(adr, len);
                         var body = string.Join(" ", resp.Select(_ => _.ToString("X2")));
-                        Debug.WriteLine($"Read: MR  adr={adr}, len={len}, dat={body}");
+                        Updatable.AddCommLog($"Read: MR  adr={adr}, len={len}, dat={body}");
                         return resp;
                     }
                     if (dev == 0xA8 && sub == 0)
                     {
                         var resp = DM.GetWord(_adr, len);
                         var body = string.Join(" ", resp.Select(_ => _.ToString("X2")));
-                        Debug.WriteLine($"Read: DM  adr={_adr}, len={len}, dat={body}");
+                        Updatable.AddCommLog($"Read: DM  adr={_adr}, len={len}, dat={body}");
                         return resp;
                     }
                     break;
@@ -137,33 +174,33 @@ namespace MCProtocol
                         var body = string.Join(" ", dat.Select(_ => _.ToString("X2")));
                         if (dev == 0x9c && sub == 0)
                         {
-                            Debug.WriteLine($"Write: R  adr={adr}, len={len}, dat={body}");
+                            Updatable.AddCommLog($"Write: R  adr={adr}, len={len}, dat={body}");
                             return R.SetWord(adr, len, dat);
                         }
                         if (dev == 0x9c && sub == 1)
                         {
-                            Debug.WriteLine($"Write: R  adr={adr}, len={len}, dat={body}");
+                            Updatable.AddCommLog($"Write: R  adr={adr}, len={len}, dat={body}");
                             return R.SetBit(adr, len, dat);
                         }
                         if (dev == 0x90 && sub == 0)
                         {
-                            Debug.WriteLine($"Write: MR adr={adr}, len={len}, dat={body}");
+                            Updatable.AddCommLog($"Write: MR adr={adr}, len={len}, dat={body}");
                             return MR.SetWord(adr, len, dat);
                         }
                         if (dev == 0x90 && sub == 1)
                         {
-                            Debug.WriteLine($"Write: MR adr={adr}, len={len}, dat={body}");
+                            Updatable.AddCommLog($"Write: MR adr={adr}, len={len}, dat={body}");
                             return MR.SetBit(adr, len, dat);
                         }
                         if (dev == 0xA8 && sub == 0)
                         {
-                            Debug.WriteLine($"Write: DM adr={_adr}, len={len}, dat={body}");
+                            Updatable.AddCommLog($"Write: DM adr={_adr}, len={len}, dat={body}");
                             return DM.SetWord(_adr, len, dat);
                         }
                     }
                     finally
                     {
-                        Processor.Execute(this, Environment.CurrentDirectory);
+                        Processor.Execute(this);
                     }
                     break;
 
