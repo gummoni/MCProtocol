@@ -1,6 +1,5 @@
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Drawing;
 
 namespace MCProtocol
 {
@@ -15,6 +14,12 @@ namespace MCProtocol
             openFileDialog1.InitialDirectory = Path.Combine(Environment.CurrentDirectory, "Scripts");
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            StopCommLog();
+        }
+
         void DoInvoke(Action action)
         {
             if (InvokeRequired)
@@ -22,6 +27,8 @@ namespace MCProtocol
             else
                 action();
         }
+
+        T DoInvoke<T>(Func<T> action) => InvokeRequired ? Invoke(action) : action();
 
         public void UpdateConnect(int count)
         {
@@ -33,10 +40,47 @@ namespace MCProtocol
 
         public void AddCommLog(string message)
         {
-            DoInvoke(() =>
+            if (UpdateTask == null)
             {
-                LogTextBox.Text += $"{message}\r\n";
-            });
+                UpdateTask = Task.Run(LogTextUpdateTask);
+            }
+            LogTextBoxQueues.Enqueue(message);
+            LogTextBoxEvent.Set();
+        }
+
+        public void StopCommLog()
+        {
+            IsPower = false;
+            LogTextBoxQueues.Clear();
+            LogTextBoxEvent.Set();
+        }
+
+        Task? UpdateTask;
+        bool IsPower = true;
+        readonly ManualResetEventSlim LogTextBoxEvent = new();
+        readonly ConcurrentQueue<string> LogTextBoxQueues = new();
+        
+        void LogTextUpdateTask()
+        {
+            while (IsPower)
+            {
+                LogTextBoxEvent.Wait();
+                LogTextBoxEvent.Reset();
+                if (LogTextBoxQueues.IsEmpty)
+                    continue;
+
+                var message = DoInvoke(() => LogTextBox.Text);
+                while (LogTextBoxQueues.TryDequeue(out string? data))
+                    message += $"{data}\r\n";
+                DoInvoke(() =>
+                {
+                    LogTextBox.SuspendLayout();
+                    LogTextBox.Text = message;
+                    LogTextBox.SelectionStart = message.Length;
+                    LogTextBox.ScrollToCaret();
+                    LogTextBox.ResumeLayout();
+                });
+            }
         }
 
         private void ScriptFolderButton_Click(object sender, EventArgs e)

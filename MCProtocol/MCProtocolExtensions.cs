@@ -29,8 +29,8 @@ namespace MCProtocol
 
         public static byte[] GetWord(this ConcurrentDictionary<int, bool> dic, int adr)
         {
-            var l = GetByte(dic, adr + 8);
-            var h = GetByte(dic, adr + 0);
+            var l = GetByte(dic, adr + 0);
+            var h = GetByte(dic, adr + 8);
             return new byte[] { l, h };
         }
 
@@ -58,21 +58,22 @@ namespace MCProtocol
 
         public static byte[] SetBit(this ConcurrentDictionary<int, bool> dic, int adr, int len, byte[] dat)
         {
-            for (var idx = 0; idx < len; idx += 2)
+            var cnt = 0;
+            for (var idx = 0; idx < len; idx += 2, cnt++)
             {
-                dic[Conv(adr + idx + 0)] = (dat[idx] & 0xf0) != 0;
+                dic[Conv(adr + idx + 0)] = (dat[cnt] & 0xf0) != 0;
                 if ((idx + 1) < len)
-                    dic[Conv(adr + idx + 1)] = (dat[idx] & 0x0f) != 0;
+                    dic[Conv(adr + idx + 1)] = (dat[cnt] & 0x0f) != 0;
             }
-            return Array.Empty<byte>();
+                return Array.Empty<byte>();
         }
 
         public static byte[] SetWord(this ConcurrentDictionary<int, bool> dic, int adr, int len, byte[] val)
         {
             for (var idx = 0; idx < len; idx++)
             {
-                SetByte(dic, adr + idx * 16 + 0, val[idx * 2 + 1]);
-                SetByte(dic, adr + idx * 16 + 8, val[idx * 2 + 0]);
+                SetByte(dic, adr + idx * 16 + 0, val[idx * 2 + 0]);
+                SetByte(dic, adr + idx * 16 + 8, val[idx * 2 + 1]);
             }
             return Array.Empty<byte>();
         }
@@ -120,9 +121,9 @@ namespace MCProtocol
             var cnt = 0;
             try
             {
-                for (var idx = 0; idx < len / 2; idx++, cnt++)
+                for (var idx = 0; idx < len; idx += 2, cnt++)
                 {
-                    dic[adr + cnt] = (ushort)((dat[idx * 2 + 1] << 8) | (dat[idx * 2 + 0]));
+                    dic[adr + cnt] = (ushort)((dat[idx + 1] << 8) | (dat[idx + 0]));
                 }
             }
             catch(Exception ex)
@@ -132,6 +133,11 @@ namespace MCProtocol
 
             return Array.Empty<byte>();
         }
+
+        //ushort = AB 12H    (short:HL)
+        //ＬＨ   = 12 AB     (byte :LH)   
+        //Ｌ     = 76543210  (bit  :右から左へ)
+        //Ｈ     = FEDCBA98  (bit  :右から左へ)
 
         //ビット単位で読み書きする場合、ニブルで表現
         //byte[] = | B0 | B1 | B2 | B3 

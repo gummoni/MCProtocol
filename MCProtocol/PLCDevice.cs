@@ -22,11 +22,18 @@ namespace MCProtocol
 #if true
             //ビット操作の確認
             R.SetBit(1000, 1, new byte[] { 0x10 });
+            var ret0 = R.GetWord(1000, 1);
             R.SetBit(1001, 2, new byte[] { 0x01 });
             R.SetBit(1003, 2, new byte[] { 0x11 });
             var ret1 = R.GetBit(1000, 1);
             var ret2 = R.GetBit(1001, 1);
             var ret3 = R.GetBit(1000, 5);
+
+            R.SetWord(1500, 1, new byte[] { 0x01, 0x20 });
+            var retA = R.GetWord(1500, 1);
+            var retB = R.GetBit(1500, 1);
+            var retC = R.GetBit(1500 + 12, 2);
+            var retD = R.GetBit(1500 + 13, 1);
 
             //ワード操作の確認
             R.SetWord(2000, 2, new[] { (byte)0xAB, (byte)0x12, (byte)0x34, (byte)0xCD });
@@ -122,7 +129,8 @@ namespace MCProtocol
             var adr = bytes[15] | bytes[16] << 8 | bytes[17] << 16; //アドレス
             var dev = bytes[18];                                    //デバイスコード
             var len = bytes[19] | bytes[20] << 8;                   //デバイス数
-            var dat = bytes[21..(21 + len)];                        //受信データ
+            var siz = sub == 1 ? 1 : 2;
+            var dat = bytes[21..(21 + len * siz)];                  //受信データ
 
             var _adr = adr;
             adr = AddressDecode(adr);
