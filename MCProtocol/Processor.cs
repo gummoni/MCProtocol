@@ -151,7 +151,18 @@ namespace MCProtocol
                             {
                                 Dispatch(plc, _filename).Wait();
                             }
-                            break;                            
+                            break;
+
+                        case "COPY":
+                            //DMコピー
+                            var src = int.Parse(rows[1]);
+                            var dst = int.Parse(rows[2]);
+                            var len = int.Parse(rows[3]);
+                            for (var i = 0; i < len; i++)
+                            {
+                                plc.DM[dst + i] = (plc.DM.TryGetValue(src + i, out ushort val)) ? val : (ushort)0;
+                            }
+                            break;
                     }
                 }
             });
