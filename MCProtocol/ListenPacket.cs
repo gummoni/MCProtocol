@@ -9,17 +9,19 @@ namespace MCProtocol
         readonly Socket Socket;
         readonly byte[] Bytes = new byte[4096];
         readonly Func<Socket, byte[], byte[]> DoRecieveAndResponse;
+        readonly IUIUpdatable Updatable;
 
         /// <summary>
         /// コンストラクタ処理
         /// </summary>
         /// <param name="socket"></param>
         /// <param name="recieveAndResponse"></param>
-        public ListenPacket(Socket socket, Func<Socket, byte[], byte[]> recieveAndResponse)
+        public ListenPacket(Socket socket, Func<Socket, byte[], byte[]> recieveAndResponse, IUIUpdatable updatable)
         {
             Count++;
             Socket = socket;
             DoRecieveAndResponse = recieveAndResponse;
+            Updatable = updatable;
         }
 
         /// <summary>
@@ -34,12 +36,16 @@ namespace MCProtocol
         {
             try
             {
-                Count--;
                 Socket.Disconnect(false);
                 Socket.Dispose();
             }
             catch
             {
+            }
+            finally
+            {
+                Count--;
+                Updatable.UpdateConnect(Count);
             }
         }
 

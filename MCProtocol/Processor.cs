@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Data;
 using System.Text.RegularExpressions;
 
 namespace MCProtocol
@@ -6,6 +7,10 @@ namespace MCProtocol
     public static class Processor
     {
         readonly static ConcurrentBag<string> IgnoreFilenames = new();
+        readonly static ConcurrentQueue<IEnumerator<bool>> Queues = new();
+        readonly static List<string> Filenames = new();
+        static bool IsPower = false;
+        static IUIUpdatable Updatable;
 
         /// <summary>
         /// 実行
@@ -13,11 +18,41 @@ namespace MCProtocol
         /// <param name="plc"></param>
         public static void Execute(PLCDevice plc)
         {
-            var files = Directory.GetFiles(Environment.CurrentDirectory, "*.csv", SearchOption.AllDirectories);
+            var files = Directory.GetFiles(Environment.CurrentDirectory, "*.csv", SearchOption.AllDirectories).Where(_ => !IgnoreFilenames.Contains(_)).Where(_ => !Filenames.Contains(_));
             foreach (var file in files)
             {
-                Dispatch(plc, file);
+                Filenames.Add(file);
+                Queues.Enqueue(Dispatch(plc, file).GetEnumerator());
             }
+
+            if (Queues.TryDequeue(out IEnumerator<bool>? queue))
+            {
+                if (queue.MoveNext())
+                    Queues.Enqueue(queue);
+            }
+        }
+
+        /// <summary>
+        /// タスク起動
+        /// </summary>
+        /// <param name="plc"></param>
+        public static void Start(PLCDevice plc, IUIUpdatable updatable)
+        {
+            Updatable = updatable;
+            new Thread(() =>
+            {
+                IsPower = true;
+                while (IsPower)
+                {
+                    Execute(plc);
+                    Thread.Sleep(1);
+                }
+            }).Start();
+        }
+
+        public static void Stop()
+        {
+            IsPower = false;
         }
 
         /// <summary>
@@ -38,40 +73,43 @@ namespace MCProtocol
         /// <param name="filename"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static Task Dispatch(PLCDevice plc, string filename)
+        public static IEnumerable<bool> Dispatch(PLCDevice plc, string filename)
         {
-            if (IgnoreFilenames.Contains(filename))
-                return Task.Delay(0);
+            //if (IgnoreFilenames.Contains(filename))
+            //    yield break;
+            //if (Filenames.Contains(filename))
+            //    yield break;
 
-            return Task.Run(() =>
+            //Filenames.Add(filename);
+            var lines = File.ReadAllLines(filename)
+                .Select(_ => Regex.Replace(_, "[ 　\t]", ""))
+                .Select(_ => Regex.Replace(_, ";.*$", "").ToUpper());
+
+            foreach (var line in lines)
             {
-                var lines = File.ReadAllLines(filename)
-                    .Select(_ => Regex.Replace(_, "[ 　\t]", ""))
-                    .Select(_ => Regex.Replace(_, ";.*$", "").ToUpper());
-
-                foreach (var line in lines)
+                if (string.IsNullOrEmpty(line)) continue;
+                var rows = line.Split(',');
+                if (rows is null) break;
+                if (string.IsNullOrEmpty(rows[0])) break;
+                switch (rows[0])
                 {
-                    if (string.IsNullOrEmpty(line)) continue;
-                    var rows = line.Split(',');
-                    if (rows is null) return;
-                    if (string.IsNullOrEmpty(rows[0])) return;
-                    switch (rows[0])
-                    {
-                        case "INIT":
-                            //１回のみ実行
-                            IgnoreFilenames.Add(filename);
-                            break;
+                    case "INIT":
+                        //１回のみ実行
+                        IgnoreFilenames.Add(filename);
+                        break;
 
-                        case "TRIG":
-                            //条件チェック（一致したらスクリプト実行）
+                    case "TRIG":
+                        //条件チェック（一致したらスクリプト実行）
+                        while (true)
+                        {
+                            var isLoop = true;
                             switch (rows[1])
                             {
                                 case "R":
                                     if (plc.R.TryGetValue(int.Parse(rows[2]), out bool rv))
                                     {
                                         var flg = rows[3] == "1";
-                                        if (flg != rv) return;
-                                        continue;
+                                        isLoop = flg != rv;
                                     }
                                     break;
 
@@ -79,8 +117,7 @@ namespace MCProtocol
                                     if (plc.MR.TryGetValue(int.Parse(rows[2]), out bool mrv))
                                     {
                                         var flg = rows[3] == "1";
-                                        if (flg != mrv) return;
-                                        continue;
+                                        isLoop = flg != mrv;
                                     }
                                     break;
 
@@ -88,84 +125,100 @@ namespace MCProtocol
                                     if (plc.DM.TryGetValue(int.Parse(rows[2]), out ushort dmv))
                                     {
                                         var flg = int.Parse(rows[3]);
-                                        if (flg != dmv) return;
-                                        continue;
+                                        isLoop = flg != dmv;
                                     }
                                     break;
 
                                 default:
                                     throw new Exception("未定義の引数です");
                             }
-                            break;
 
-                        case "WAIT":
-                            //ウェイト
-                            var waitValue = int.Parse(rows[1]);
-                            if (waitValue > 0) Thread.Sleep(waitValue);
-                            break;
-
-                        case "CLR":
-                            //フラグクリア
-                            switch (rows[1])
+                            if (!isLoop)
                             {
-                                case "R":
-                                    plc.R[int.Parse(rows[2])] = false;
-                                    break;
-
-                                case "MR":
-                                    plc.MR[int.Parse(rows[2])] = false;
-                                    break;
-
-                                case "DM":
-                                    throw new Exception("使用不可");
-
-                                default:
-                                    throw new Exception("未定義の引数です");
+                                //条件一致
+                                Updatable.AddCommLog("", $"★{Path.GetFileNameWithoutExtension(filename)}: {rows[1]}{rows[2]}");
+                                break;
                             }
-                            break;
-
-                        case "SET":
-                            //フラグセット
-                            switch (rows[1])
+                            else
                             {
-                                case "R":
-                                    plc.R[int.Parse(rows[2])] = true;
-                                    break;
-
-                                case "MR":
-                                    plc.MR[int.Parse(rows[2])] = true;
-                                    break;
-
-                                case "DM":
-                                    plc.DM[int.Parse(rows[2])] = ushort.Parse(rows[3]);
-                                    break;
-
-                                default:
-                                    throw new Exception("未定義の引数です");
+                                //次へ
+                                yield return true;
                             }
-                            break;
+                        }
+                        break;
 
-                        case "CALL":
-                            //ファイル実行
-                            if (SearchFile(rows[1]) is string _filename)
-                            {
-                                Dispatch(plc, _filename).Wait();
-                            }
-                            break;
+                    case "WAIT":
+                        //ウェイト
+                        var waitValue = int.Parse(rows[1]);
+                        if (waitValue > 0) Thread.Sleep(waitValue);
+                        break;
 
-                        case "COPY":
-                            //DMコピー
-                            var src = int.Parse(rows[1]);
-                            var dst = int.Parse(rows[2]);
-                            var len = int.Parse(rows[3]);
-                            for (var i = 0; i < len; i++)
-                            {
-                                plc.DM[dst + i] = (plc.DM.TryGetValue(src + i, out ushort val)) ? val : (ushort)0;
-                            }
-                            break;
-                    }
+                    case "CLR":
+                        //フラグクリア
+                        switch (rows[1])
+                        {
+                            case "R":
+                                plc.R[int.Parse(rows[2])] = false;
+                                break;
+
+                            case "MR":
+                                plc.MR[int.Parse(rows[2])] = false;
+                                break;
+
+                            case "DM":
+                                throw new Exception("使用不可");
+
+                            default:
+                                throw new Exception("未定義の引数です");
+                        }
+                        break;
+
+                    case "SET":
+                        //フラグセット
+                        switch (rows[1])
+                        {
+                            case "R":
+                                plc.R[int.Parse(rows[2])] = true;
+                                break;
+
+                            case "MR":
+                                plc.MR[int.Parse(rows[2])] = true;
+                                break;
+
+                            case "DM":
+                                plc.DM[int.Parse(rows[2])] = ushort.Parse(rows[3]);
+                                break;
+
+                            default:
+                                throw new Exception("未定義の引数です");
+                        }
+                        break;
+
+                    case "CALL":
+                        //ファイル実行
+                        if (SearchFile(rows[1]) is string _filename)
+                        {
+                            foreach (var x in Dispatch(plc, _filename))
+                                yield return true;
+                        }
+                        break;
+
+                    case "COPY":
+                        //DMコピー
+                        var src = int.Parse(rows[1]);
+                        var dst = int.Parse(rows[2]);
+                        var len = int.Parse(rows[3]);
+                        for (var i = 0; i < len; i++)
+                        {
+                            plc.DM[dst + i] = (plc.DM.TryGetValue(src + i, out ushort val)) ? val : (ushort)0;
+                        }
+                        break;
                 }
-            });
+
+                yield return true;
+            }
+
+            Filenames.Remove(filename);
         }
     }
 }

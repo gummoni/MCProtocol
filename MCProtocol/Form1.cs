@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 namespace MCProtocol
 {
+
     public partial class Form1 : Form, IUIUpdatable
     {
         readonly PLCDevice PLC;
@@ -12,12 +13,14 @@ namespace MCProtocol
             InitializeComponent();
             PLC = new(5000, this);
             openFileDialog1.InitialDirectory = Path.Combine(Environment.CurrentDirectory, "Scripts");
+            Processor.Start(PLC, this);
         }
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
             StopCommLog();
+            Processor.Stop();
         }
 
         void DoInvoke(Action action)
@@ -38,13 +41,16 @@ namespace MCProtocol
             });
         }
 
-        public void AddCommLog(string message)
+        public void AddCommLog(string adr, string message)
         {
             if (UpdateTask == null)
             {
                 UpdateTask = Task.Run(LogTextUpdateTask);
             }
-            LogTextBoxQueues.Enqueue(message);
+            var _adr = MemISDic.GetComment(adr);
+            var time1 = DateTime.Now.ToString("HH:mm:ss.fff");                                         // 現在時刻の文字フォーマット
+
+            LogTextBoxQueues.Enqueue($"{time1},{_adr}:{message}");
             LogTextBoxEvent.Set();
         }
 
@@ -59,7 +65,7 @@ namespace MCProtocol
         bool IsPower = true;
         readonly ManualResetEventSlim LogTextBoxEvent = new();
         readonly ConcurrentQueue<string> LogTextBoxQueues = new();
-        
+
         void LogTextUpdateTask()
         {
             while (IsPower)
@@ -94,19 +100,20 @@ namespace MCProtocol
             }
         }
 
-        private async void ScriptRunButton_Click(object sender, EventArgs e)
+        private void ScriptRunButton_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
             {
                 try
                 {
-                    AddCommLog($"[{openFileDialog1.FileName}]ファイル開始");
-                    await Processor.Dispatch(PLC, openFileDialog1.FileName);
-                    AddCommLog($"[{openFileDialog1.FileName}]ファイル完了");
+                    AddCommLog("", $"[{openFileDialog1.FileName}]ファイル開始");
+                    foreach (var _ in Processor.Dispatch(PLC, openFileDialog1.FileName))
+                        ;
+                    AddCommLog("", $"[{openFileDialog1.FileName}]ファイル完了");
                 }
                 catch
                 {
-                    AddCommLog($"[{openFileDialog1.FileName}]ファイル中断");
+                    AddCommLog("", $"[{openFileDialog1.FileName}]ファイル中断");
                 }
             }
         }
@@ -125,11 +132,16 @@ namespace MCProtocol
         {
             new DicEditForm(" R", PLC.R).ShowDialog(this);
         }
+
+        private void UnitTypeCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            MemISDic.IsOK2AMode = UnitTypeCheckBox.Checked;
+        }
     }
 
     public interface IUIUpdatable
     {
         void UpdateConnect(int count);
-        void AddCommLog(string message);
+        void AddCommLog(string adr, string message);
     }
 }

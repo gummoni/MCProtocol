@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
+            UnitTypeCheckBox = new CheckBox();
             RButton = new Button();
             MRButton = new Button();
             DMButton = new Button();
@@ -43,6 +44,7 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(UnitTypeCheckBox);
             panel1.Controls.Add(RButton);
             panel1.Controls.Add(MRButton);
             panel1.Controls.Add(DMButton);
@@ -53,8 +55,19 @@
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(819, 39);
+            panel1.Size = new Size(819, 66);
             panel1.TabIndex = 0;
+            // 
+            // UnitTypeCheckBox
+            // 
+            UnitTypeCheckBox.AutoSize = true;
+            UnitTypeCheckBox.Location = new Point(167, 41);
+            UnitTypeCheckBox.Name = "UnitTypeCheckBox";
+            UnitTypeCheckBox.Size = new Size(81, 19);
+            UnitTypeCheckBox.TabIndex = 4;
+            UnitTypeCheckBox.Text = "OK2Aモード";
+            UnitTypeCheckBox.UseVisualStyleBackColor = true;
+            UnitTypeCheckBox.CheckedChanged += UnitTypeCheckBox_CheckedChanged;
             // 
             // RButton
             // 
@@ -126,11 +139,12 @@
             // LogTextBox
             // 
             LogTextBox.Dock = DockStyle.Fill;
-            LogTextBox.Location = new Point(0, 39);
+            LogTextBox.Font = new Font("ＭＳ ゴシック", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            LogTextBox.Location = new Point(0, 66);
             LogTextBox.Multiline = true;
             LogTextBox.Name = "LogTextBox";
             LogTextBox.ScrollBars = ScrollBars.Both;
-            LogTextBox.Size = new Size(819, 411);
+            LogTextBox.Size = new Size(819, 384);
             LogTextBox.TabIndex = 1;
             // 
             // openFileDialog1
@@ -164,5 +178,6 @@
         private Button DMButton;
         private Button RButton;
         private Button MRButton;
+        private CheckBox UnitTypeCheckBox;
     }
 }
