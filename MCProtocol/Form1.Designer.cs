@@ -159,7 +159,7 @@
             Controls.Add(LogTextBox);
             Controls.Add(panel1);
             Name = "Form1";
-            Text = "PLCエミュレータv0.1 (MCプロトコル port=5000)";
+            Text = "PLCエミュレータv0.3 (MCプロトコル ip=127.0.0.1, port=5000)";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
