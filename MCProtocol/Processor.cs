@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Data;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace MCProtocol
@@ -10,7 +11,7 @@ namespace MCProtocol
         readonly static ConcurrentQueue<IEnumerator<bool>> Queues = new();
         readonly static List<string> Filenames = new();
         static bool IsPower = false;
-        static IUIUpdatable Updatable;
+        static IUIUpdatable? Updatable;
 
         /// <summary>
         /// 実行
@@ -136,7 +137,7 @@ namespace MCProtocol
                             if (!isLoop)
                             {
                                 //条件一致
-                                Updatable.AddCommLog("", $"★{Path.GetFileNameWithoutExtension(filename)}: {rows[1]}{rows[2]}");
+                                Updatable?.AddCommLog("", $"★{Path.GetFileNameWithoutExtension(filename)}: {rows[1]}{rows[2]}");
                                 break;
                             }
                             else
@@ -150,11 +151,16 @@ namespace MCProtocol
                     case "WAIT":
                         //ウェイト
                         var waitValue = int.Parse(rows[1]);
-                        if (waitValue > 0) Thread.Sleep(waitValue);
+                        var sw = new Stopwatch();
+                        sw.Restart();
+                        Updatable?.AddCommLog("", $"★{Path.GetFileNameWithoutExtension(filename)}: {rows[1]}");
+                        while (sw.ElapsedMilliseconds < waitValue)
+                            yield return true;
                         break;
 
                     case "CLR":
                         //フラグクリア
+                        Updatable?.AddCommLog("", $"★{Path.GetFileNameWithoutExtension(filename)}: {line}");
                         switch (rows[1])
                         {
                             case "R":
@@ -175,6 +181,7 @@ namespace MCProtocol
 
                     case "SET":
                         //フラグセット
+                        Updatable?.AddCommLog("", $"★{Path.GetFileNameWithoutExtension(filename)}: {line}");
                         switch (rows[1])
                         {
                             case "R":
@@ -196,6 +203,7 @@ namespace MCProtocol
 
                     case "CALL":
                         //ファイル実行
+                        Updatable?.AddCommLog("", $"★{Path.GetFileNameWithoutExtension(filename)}: {line}");
                         if (SearchFile(rows[1]) is string _filename)
                         {
                             foreach (var x in Dispatch(plc, _filename))
@@ -205,6 +213,7 @@ namespace MCProtocol
 
                     case "COPY":
                         //DMコピー
+                        Updatable?.AddCommLog("", $"★{Path.GetFileNameWithoutExtension(filename)}: {line}");
                         var src = int.Parse(rows[1]);
                         var dst = int.Parse(rows[2]);
                         var len = int.Parse(rows[3]);
@@ -214,8 +223,6 @@ namespace MCProtocol
                         }
                         break;
                 }
-
-                yield return true;
             }
 
             Filenames.Remove(filename);
