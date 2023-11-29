@@ -119,6 +119,7 @@ namespace MCProtocol
             return ((address / 100) << 4) + (address % 100);
         }
 
+
         byte[] Parse(byte[] bytes)
         {
             //var length = bytes[7] + (bytes[8] << 8);              //受信データ長
@@ -142,35 +143,35 @@ namespace MCProtocol
                     {
                         var resp = R.GetWord(adr, len);
                         var body = string.Join(" ", resp.Select(_ => _.ToString("X2")));
-                        Updatable.AddCommLog($"R{adr}", $"Read:  R len={len}, dat={body}");
+                        Updatable.AddCommLog($"R{adr}", $"Read: len={len}, dat={body}");
                         return resp;
                     }
                     if (dev == 0x9c && sub == 1)
                     {
                         var resp = R.GetBit(adr, len);
                         var body = string.Join(" ", resp.Select(_ => _.ToString("X2")));
-                        Updatable.AddCommLog($"R{adr}", $"Read:  R len={len}, dat={body}");
+                        Updatable.AddCommLog($"R{adr}", $"Read: len={len}, dat={body}");
                         return resp;
                     }
                     if (dev == 0x90 && sub == 0)
                     {
                         var resp = MR.GetWord(adr, len);
                         var body = string.Join(" ", resp.Select(_ => _.ToString("X2")));
-                        Updatable.AddCommLog($"MR{adr}", $"Read: MR len={len}, dat={body}");
+                        Updatable.AddCommLog($"MR{adr}", $"Read: len={len}, dat={body}");
                         return resp;
                     }
                     if (dev == 0x90 && sub == 1)
                     {
                         var resp = MR.GetBit(adr, len);
                         var body = string.Join(" ", resp.Select(_ => _.ToString("X2")));
-                        Updatable.AddCommLog($"MR{adr}", $"Read: MR adr={adr}, len={len}, dat={body}");
+                        Updatable.AddCommLog($"MR{adr}", $"Read: len={len}, dat={body}");
                         return resp;
                     }
                     if (dev == 0xA8 && sub == 0)
                     {
                         var resp = DM.GetWord(_adr, len);
                         var body = string.Join(" ", resp.Select(_ => _.ToString("X2")));
-                        Updatable.AddCommLog($"DM{adr}", $"Read: DM len={len}, dat={body}");
+                        Updatable.AddCommLog($"DM{adr}", $"Read: len={len}, dat={body}");
                         return resp;
                     }
                     break;
@@ -182,7 +183,7 @@ namespace MCProtocol
                         var body = string.Join(" ", dat.Select(_ => _.ToString("X2")));
                         if (dev == 0x9c && sub == 0)
                         {
-                            Updatable.AddCommLog($"R{adr}", $"Write: R  len={len}, dat={body}");
+                            Updatable.AddCommLog($"R{adr}", $"Write:len={len}, dat={body}");
                             return R.SetWord(adr, len, dat);
                         }
                         if (dev == 0x9c && sub == 1)
@@ -192,17 +193,17 @@ namespace MCProtocol
                         }
                         if (dev == 0x90 && sub == 0)
                         {
-                            Updatable.AddCommLog($"MR{adr}", $"Write: MR len={len}, dat={body}");
+                            Updatable.AddCommLog($"MR{adr}", $"Write:len={len}, dat={body}");
                             return MR.SetWord(adr, len, dat);
                         }
                         if (dev == 0x90 && sub == 1)
                         {
-                            Updatable.AddCommLog($"MR{adr}", $"Write: MR len={len}, dat={body}");
+                            Updatable.AddCommLog($"MR{adr}", $"Write:len={len}, dat={body}");
                             return MR.SetBit(adr, len, dat);
                         }
                         if (dev == 0xA8 && sub == 0)
                         {
-                            Updatable.AddCommLog($"DM{adr}", $"Write: DM len={len}, dat={body}");
+                            Updatable.AddCommLog($"DM{adr}", $"Write:len={len}, dat={body}");
                             return DM.SetWord(_adr, len, dat);
                         }
                     }

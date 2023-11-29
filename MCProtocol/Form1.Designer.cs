@@ -146,6 +146,7 @@
             LogTextBox.ScrollBars = ScrollBars.Both;
             LogTextBox.Size = new Size(819, 384);
             LogTextBox.TabIndex = 1;
+            LogTextBox.WordWrap = false;
             // 
             // openFileDialog1
             // 

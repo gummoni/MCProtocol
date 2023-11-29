@@ -13,9 +13,9 @@ namespace MCProtocol
             InitializeComponent();
             PLC = new(5000, this);
             openFileDialog1.InitialDirectory = Path.Combine(Environment.CurrentDirectory, "Scripts");
+
             Processor.Start(PLC, this);
         }
-
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
