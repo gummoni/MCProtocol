@@ -66,6 +66,55 @@ namespace MCProtocol
         readonly ManualResetEventSlim LogTextBoxEvent = new();
         readonly ConcurrentQueue<string> LogTextBoxQueues = new();
 
+        static readonly string[] StatusFilter = new[] 
+        {
+            "DM1050",
+            "R35000",
+            "R36000",
+            "R35009",
+            "R35010",
+            "MR2100",
+            "MR2101",
+            "MR2102",
+            "MR2103",
+            "MR2104",
+            "MR2105",
+            "R35114",
+            "R36004",
+            "R35113",
+            "R36003",
+            "R36009",
+            "R35109",
+            "R35115",
+            "R36005",
+            "R35110",
+            "R36000",
+            "R36006",
+            "R35111",
+            "R36001",
+            "R36007",
+            "R35112",
+            "R36002",
+            "R36008",
+            "R36103",
+            "R36114",
+            "R36012",
+            "R36014",
+            "R36013",
+            "R36015",
+            "DM608",
+            "DM610",
+            "DM612",
+            "DM614",
+            "DM616",
+            "DM618",
+            "DM620",
+            "DM4310",
+            "MR4311",
+            "DM600",
+        };
+
+
         void LogTextUpdateTask()
         {
             while (IsPower)
@@ -75,14 +124,32 @@ namespace MCProtocol
                 if (LogTextBoxQueues.IsEmpty)
                     continue;
 
-                var message = DoInvoke(() => LogTextBox.Text);
+                var messageLog = DoInvoke(() => LogTextBox.Text);
+                var messageStatus = DoInvoke(() => StatusTextBox.Text);
                 while (LogTextBoxQueues.TryDequeue(out string? data))
-                    message += $"{data}\r\n";
+                {
+                    var isStatus = StatusFilter.FirstOrDefault(data.Contains) != null;
+                    if (isStatus)
+                    {
+                        messageStatus += $"{data}\r\n";
+                    }
+                    else
+                    {
+                        messageLog += $"{data}\r\n";
+                    }
+                }
+
                 DoInvoke(() =>
                 {
+                    StatusTextBox.SuspendLayout();
+                    StatusTextBox.Text = messageStatus;
+                    StatusTextBox.SelectionStart = messageStatus.Length;
+                    StatusTextBox.ScrollToCaret();
+                    StatusTextBox.ResumeLayout();
+
                     LogTextBox.SuspendLayout();
-                    LogTextBox.Text = message;
-                    LogTextBox.SelectionStart = message.Length;
+                    LogTextBox.Text = messageLog;
+                    LogTextBox.SelectionStart = messageLog.Length;
                     LogTextBox.ScrollToCaret();
                     LogTextBox.ResumeLayout();
                 });

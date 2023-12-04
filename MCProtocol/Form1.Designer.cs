@@ -37,9 +37,16 @@
             ScriptFolderButton = new Button();
             ConnectTextBox = new TextBox();
             label1 = new Label();
-            LogTextBox = new TextBox();
             openFileDialog1 = new OpenFileDialog();
+            tabControl1 = new TabControl();
+            tabPage1 = new TabPage();
+            LogTextBox = new TextBox();
+            tabPage2 = new TabPage();
+            StatusTextBox = new TextBox();
             panel1.SuspendLayout();
+            tabControl1.SuspendLayout();
+            tabPage1.SuspendLayout();
+            tabPage2.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -136,35 +143,84 @@
             label1.TabIndex = 0;
             label1.Text = "接続数";
             // 
+            // openFileDialog1
+            // 
+            openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // tabControl1
+            // 
+            tabControl1.Controls.Add(tabPage1);
+            tabControl1.Controls.Add(tabPage2);
+            tabControl1.Dock = DockStyle.Fill;
+            tabControl1.Location = new Point(0, 66);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(819, 384);
+            tabControl1.TabIndex = 1;
+            // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(LogTextBox);
+            tabPage1.Location = new Point(4, 24);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(811, 356);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "ログ";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
             // LogTextBox
             // 
             LogTextBox.Dock = DockStyle.Fill;
             LogTextBox.Font = new Font("ＭＳ ゴシック", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            LogTextBox.Location = new Point(0, 66);
+            LogTextBox.Location = new Point(3, 3);
             LogTextBox.Multiline = true;
             LogTextBox.Name = "LogTextBox";
             LogTextBox.ScrollBars = ScrollBars.Both;
-            LogTextBox.Size = new Size(819, 384);
-            LogTextBox.TabIndex = 1;
+            LogTextBox.Size = new Size(805, 350);
+            LogTextBox.TabIndex = 2;
             LogTextBox.WordWrap = false;
             // 
-            // openFileDialog1
+            // tabPage2
             // 
-            openFileDialog1.FileName = "openFileDialog1";
+            tabPage2.Controls.Add(StatusTextBox);
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(811, 356);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "ステータス";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // StatusTextBox
+            // 
+            StatusTextBox.Dock = DockStyle.Fill;
+            StatusTextBox.Font = new Font("ＭＳ ゴシック", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            StatusTextBox.Location = new Point(3, 3);
+            StatusTextBox.Multiline = true;
+            StatusTextBox.Name = "StatusTextBox";
+            StatusTextBox.ScrollBars = ScrollBars.Both;
+            StatusTextBox.Size = new Size(805, 350);
+            StatusTextBox.TabIndex = 3;
+            StatusTextBox.WordWrap = false;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(819, 450);
-            Controls.Add(LogTextBox);
+            Controls.Add(tabControl1);
             Controls.Add(panel1);
             Name = "Form1";
             Text = "PLCエミュレータv0.3 (MCプロトコル ip=127.0.0.1, port=5000)";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            tabControl1.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -172,7 +228,6 @@
         private Panel panel1;
         private TextBox ConnectTextBox;
         private Label label1;
-        private TextBox LogTextBox;
         private Button ScriptFolderButton;
         private Button ScriptRunButton;
         private OpenFileDialog openFileDialog1;
@@ -180,5 +235,10 @@
         private Button RButton;
         private Button MRButton;
         private CheckBox UnitTypeCheckBox;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
+        private TextBox LogTextBox;
+        private TabPage tabPage2;
+        private TextBox StatusTextBox;
     }
 }
