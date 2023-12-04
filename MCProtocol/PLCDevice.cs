@@ -169,7 +169,8 @@ namespace MCProtocol
                     }
                     if (dev == 0xA8 && sub == 0)
                     {
-                        var resp = DM.GetWord(_adr, len);
+                        adr = _adr;
+                        var resp = DM.GetWord(adr, len);
                         var body = string.Join(" ", resp.Select(_ => _.ToString("X2")));
                         Updatable.AddCommLog($"DM{adr}", $"Read: len={len}, dat={body}");
                         return resp;
@@ -203,8 +204,9 @@ namespace MCProtocol
                         }
                         if (dev == 0xA8 && sub == 0)
                         {
+                            adr = _adr;
                             Updatable.AddCommLog($"DM{adr}", $"Write:len={len}, dat={body}");
-                            return DM.SetWord(_adr, len, dat);
+                            return DM.SetWord(adr, len, dat);
                         }
                     }
                     finally
