@@ -2,6 +2,11 @@
 INIT
 SET,MR,100
 
+;実行状態
+CLR,MR,4200
+CLR,MR,4201
+CLR,MR,4202
+
 ;ステージ1?
 SET,R,35014
 

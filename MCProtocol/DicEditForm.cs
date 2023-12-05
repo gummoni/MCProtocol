@@ -28,8 +28,10 @@ namespace MCProtocol
             Text = $"{reg}レジスタ一覧";
             foreach (var key in keys)
             {
+                var adr = $"{reg}{key:D5}";
                 var ret = dic[key] ? "●" : "－";
-                textBox1.Text += $"{reg}{key:D5}={ret}\r\n";
+                var cmt = MemISDic.GetCommentOnly($"{reg}{key}".Trim());
+                textBox1.Text += $"{adr}={ret}\t{cmt}\r\n";
             }
         }
 
@@ -42,7 +44,9 @@ namespace MCProtocol
             keys.Sort();
             foreach (var key in keys)
             {
-                textBox1.Text += $"{reg}{key:D5}={dic[key]}\r\n";
+                var adr = $"{reg}{key:D5}";
+                var cmt = MemISDic.GetCommentOnly($"{reg}{key}".Trim());
+                textBox1.Text += $"{adr}={dic[key]}\t{cmt}\r\n";
             }
         }
 

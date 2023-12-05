@@ -3712,5 +3712,19 @@ namespace MCProtocol
                 return key;
             }
         }
+
+        public static string GetCommentOnly(string key)
+        {
+            try
+            {
+                var dic = IsOK2AMode ? Dic2A : Dic1A;
+                return (dic.TryGetValue(key, out string? value)) ? value : "";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return key;
+            }
+        }
     }
 }
