@@ -205,16 +205,4 @@ namespace MCProtocol
             MemISDic.IsOK2AMode = UnitTypeCheckBox.Checked;
         }
     }
-
-    public interface IUIUpdatable
-    {
-        void UpdateConnect(int count);
-        void AddCommLog(string adr, string message);
-    }
-
-    public interface IUIUpdatable
-    {
-        void UpdateConnect(int count);
-        void AddCommLog(string message);
-    }
 }

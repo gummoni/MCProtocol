@@ -5,6 +5,35 @@ using System.Net.Sockets;
 
 namespace MCProtocol
 {
+    public interface IPlugable
+    {
+        IEnumerable<bool> Start(PLCDevice device);
+    }
+
+    public class ProtocolRunner : IPlugable
+    {
+        public IEnumerable<bool> Start(PLCDevice device)
+        {
+            while (true)
+            {
+                //プロトコル開始待ち
+                while (!device.ReadMR(4311))
+                    yield return true;
+
+
+
+
+
+                //プロトコル終了通知
+                device.WriteMR(4311, false);
+            }
+        }
+
+        void InnerLogWrite(ushort[] data)
+        {
+
+        }
+    }
 
     /// <summary>
     /// PLCデバイス
@@ -14,6 +43,10 @@ namespace MCProtocol
         public readonly ConcurrentDictionary<int, bool> R = new();
         public readonly ConcurrentDictionary<int, bool> MR = new();
         public readonly ConcurrentDictionary<int, ushort> DM = new();
+        readonly ConcurrentDictionary<int, bool> _R = new();
+        readonly ConcurrentDictionary<int, bool> _MR = new();
+        readonly ConcurrentDictionary<int, ushort> _DM = new();
+
         readonly Task DoTask;
         public bool IsFinished => DoTask.IsCompleted;
 
@@ -219,6 +252,26 @@ namespace MCProtocol
                     break;
             }
             return Array.Empty<byte>();
+        }
+
+        public bool ReadR(int address) => MR.TryGetValue(address, out bool value) && value;
+        public bool ReadMR(int address) => MR.TryGetValue(address, out bool value) && value;
+        public ushort ReadDM(int address) => DM.TryGetValue(address, out ushort value) ? value : (ushort)0;
+
+        public void WriteR(int address, bool flg)
+        {
+            R[address] = flg;
+            Updatable.AddCommLog($" R{address}", $"Write {flg}");
+        }
+        public void WriteMR(int address, bool flg)
+        {
+            MR[address] = flg;
+            Updatable.AddCommLog($"MR{address}", $"Write {flg}");
+        }
+        public void WriteDM(int address, ushort value)
+        {
+            DM[address] = value;
+            Updatable.AddCommLog($"DM{address}", $"Write {value}");
         }
 
     }
