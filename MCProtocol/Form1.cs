@@ -41,6 +41,7 @@ namespace MCProtocol
             });
         }
 
+        string _old = "";
         public void AddCommLog(string adr, string message)
         {
             if (UpdateTask == null)
@@ -50,7 +51,12 @@ namespace MCProtocol
             var _adr = MemISDic.GetComment(adr);
             var time1 = DateTime.Now.ToString("HH:mm:ss.fff");                                         // 現在時刻の文字フォーマット
 
-            LogTextBoxQueues.Enqueue($"{time1},{_adr}:{message}");
+            var chk = $"{_adr}:{message}";
+            if (chk == _old) return;
+            _old = chk;
+
+            var msg = $"{time1},{chk}";
+            LogTextBoxQueues.Enqueue(msg);
             LogTextBoxEvent.Set();
         }
 
