@@ -29,8 +29,8 @@ namespace MCProtocol
 
         public static byte[] GetWord(this ConcurrentDictionary<int, bool> dic, int adr)
         {
-            var l = GetByte(dic, adr + 8);
-            var h = GetByte(dic, adr + 0);
+            var l = GetByte(dic, adr + 0);
+            var h = GetByte(dic, adr + 8);
             return new byte[] { l, h };
         }
 
