@@ -121,7 +121,7 @@ namespace MCProtocol
             var cnt = 0;
             try
             {
-                for (var idx = 0; idx < len; idx += 2, cnt++)
+                for (var idx = 0; cnt < len; idx += 2, cnt++)
                 {
                     dic[adr + cnt] = (ushort)((dat[idx + 1] << 8) | (dat[idx + 0]));
                 }

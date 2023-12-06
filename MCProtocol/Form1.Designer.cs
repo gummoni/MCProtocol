@@ -212,7 +212,7 @@
             Controls.Add(tabControl1);
             Controls.Add(panel1);
             Name = "Form1";
-            Text = "PLCエミュレータv0.4 (MCプロトコル ip=127.0.0.1, port=5000)";
+            Text = "PLCエミュレータv0.5 (MCプロトコル ip=127.0.0.1, port=5000)";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             tabControl1.ResumeLayout(false);
