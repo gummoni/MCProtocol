@@ -222,6 +222,11 @@ namespace MCProtocol
                             plc.DM[dst + i] = (plc.DM.TryGetValue(src + i, out ushort val)) ? val : (ushort)0;
                         }
                         break;
+
+                    case "MESG":
+                        //コメント
+                        Updatable?.AddCommLog("", $"★{Path.GetFileNameWithoutExtension(filename)}: {rows[1]}");
+                        break;
                 }
             }
 
