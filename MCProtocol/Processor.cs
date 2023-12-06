@@ -1,12 +1,14 @@
 ﻿using System.Collections.Concurrent;
 using System.Data;
 using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace MCProtocol
 {
     public static class Processor
     {
+        public static bool IsRandomMode = false;
         readonly static ConcurrentBag<string> IgnoreFilenames = new();
         readonly static ConcurrentQueue<IEnumerator<bool>> Queues = new();
         readonly static List<string> Filenames = new();
@@ -82,7 +84,7 @@ namespace MCProtocol
             //    yield break;
 
             //Filenames.Add(filename);
-            var lines = File.ReadAllLines(filename)
+            var lines = File.ReadAllLines(filename, Encoding.UTF8)
                 .Select(_ => Regex.Replace(_, "[ 　\t]", ""))
                 .Select(_ => Regex.Replace(_, ";.*$", "").ToUpper());
 

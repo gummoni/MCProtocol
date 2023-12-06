@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
+            HeightRandomCheckBox = new CheckBox();
             UnitTypeCheckBox = new CheckBox();
             RButton = new Button();
             MRButton = new Button();
@@ -51,6 +52,7 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(HeightRandomCheckBox);
             panel1.Controls.Add(UnitTypeCheckBox);
             panel1.Controls.Add(RButton);
             panel1.Controls.Add(MRButton);
@@ -64,6 +66,17 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(819, 66);
             panel1.TabIndex = 0;
+            // 
+            // HeightRandomCheckBox
+            // 
+            HeightRandomCheckBox.AutoSize = true;
+            HeightRandomCheckBox.Location = new Point(314, 41);
+            HeightRandomCheckBox.Name = "HeightRandomCheckBox";
+            HeightRandomCheckBox.Size = new Size(105, 19);
+            HeightRandomCheckBox.TabIndex = 4;
+            HeightRandomCheckBox.Text = "高さランダム有効";
+            HeightRandomCheckBox.UseVisualStyleBackColor = true;
+            HeightRandomCheckBox.CheckedChanged += UnitTypeCheckBox_CheckedChanged;
             // 
             // UnitTypeCheckBox
             // 
@@ -212,7 +225,7 @@
             Controls.Add(tabControl1);
             Controls.Add(panel1);
             Name = "Form1";
-            Text = "PLCエミュレータv0.5 (MCプロトコル ip=127.0.0.1, port=5000)";
+            Text = "PLCエミュレータv0.6 (MCプロトコル ip=127.0.0.1, port=5000)";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             tabControl1.ResumeLayout(false);
@@ -240,5 +253,6 @@
         private TextBox LogTextBox;
         private TabPage tabPage2;
         private TextBox StatusTextBox;
+        private CheckBox HeightRandomCheckBox;
     }
 }

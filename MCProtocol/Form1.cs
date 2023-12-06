@@ -652,6 +652,7 @@ namespace MCProtocol
         private void UnitTypeCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             MemISDic.IsOK2AMode = UnitTypeCheckBox.Checked;
+            Processor.IsRandomMode = HeightRandomCheckBox.Checked;
         }
     }
 }
