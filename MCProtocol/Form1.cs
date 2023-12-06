@@ -72,66 +72,10 @@ namespace MCProtocol
         readonly ManualResetEventSlim LogTextBoxEvent = new();
         readonly ConcurrentQueue<string> LogTextBoxQueues = new();
 
-        static readonly string[] StatusFilter = new[] 
+        static readonly string[] StatusFilterComm = new[]
         {
-            "MR2100",   //試薬リザーバ１在荷
-            "MR2101",   //試薬リザーバ２在荷
-            "MR2102",   //試薬リザーバ３在荷
-            "MR2103",   //試薬リザーバ４在荷
-            "MR2104",   //試薬リザーバ５在荷
-            "MR2105",   //試薬リザーバ６在荷
-            "MR2106",   //試薬リザーバ７在荷
-
-            "R35000",
-            "R35009",
-            "R35010",
-            "R35109",
-            "R35110",
-            "R35111",
-            "R35112",
-            "R35113",
-            "R35114",
-            "R35115",
-
-            "R36000",
-            "R36001",
-            "R36002",
-            "R36003",
-            "R36004",
-            "R36005",
-            "R36006",
-            "R36007",
-            "R36008",
-            "R36009",
-
-            "R36012",
-            "R36013",
-            "R36014",
-            "R36015",
-            "R36103",
-            "R36114",
-
-            "DM600",
-            "DM608",
-            "DM610",
-            "DM612",
-            "DM614",
-            "DM616",
-            "DM618",
-            "DM620",
-
-            "DM1050",
-
-
             "MR4309",   //S1FN
-            "DM4310",
-
-            "MR4311",
-
             "MR4312",   //PEND
-
-            "R36104",    //空圧異常1A
-            "R35007",    //空圧異常2A
 
             "DM29400",  //RP
             "DM29401",  //WP
@@ -539,6 +483,85 @@ namespace MCProtocol
             "DM29399",
         };
 
+        static readonly string[] StatusFilter1A = new[] 
+        {
+            "MR2100",   //試薬リザーバ１在荷
+            "MR2101",   //試薬リザーバ２在荷
+            "MR2102",   //試薬リザーバ３在荷
+            "MR2103",   //試薬リザーバ４在荷
+            "MR2104",   //試薬リザーバ５在荷
+            "MR2105",   //試薬リザーバ６在荷
+            "MR2106",   //試薬リザーバ７在荷
+
+            "R35000",
+            "R35009",
+            "R35010",
+            "R35109",
+            "R35110",
+            "R35111",
+            "R35112",
+            "R35113",
+            "R35114",
+            "R35115",
+
+            "R36000",
+            "R36001",
+            "R36002",
+            "R36003",
+            "R36004",
+            "R36005",
+            "R36006",
+            "R36007",
+            "R36008",
+            "R36009",
+
+            "R36012",
+            "R36013",
+            "R36014",
+            "R36015",
+            "R36103",
+            "R36114",
+
+            "DM600",
+            "DM608",
+            "DM610",
+            "DM612",
+            "DM614",
+            "DM616",
+            "DM618",
+            "DM620",
+
+            "DM1050",
+
+            "DM4310",
+            "MR4311",
+
+            "R36104",    //空圧異常1A
+        };
+
+        static readonly string[] StatusFilter2A = new[]
+        {
+            "DM600",
+            "DM608",
+            "DM610",
+            "DM1050",
+
+            "R1400",
+
+            "R34000",
+            "R35000",
+            "R35001",
+            "R35002",
+            "R35003",
+            "R35004",
+            "R35006",
+            "R35007",    //空圧異常2A
+            "R35011",
+            "R35014",
+
+            "MR4311",
+        };
+
 
         void LogTextUpdateTask()
         {
@@ -553,7 +576,8 @@ namespace MCProtocol
                 var messageStatus = DoInvoke(() => StatusTextBox.Text);
                 while (LogTextBoxQueues.TryDequeue(out string? data))
                 {
-                    var isStatus = StatusFilter.FirstOrDefault(data.Contains) != null;
+                    var filter = UnitTypeCheckBox.Checked ? StatusFilter2A : StatusFilter1A;
+                    var isStatus = filter.FirstOrDefault(data.Contains) != null || StatusFilterComm.FirstOrDefault(data.Contains) != null;
                     if (isStatus)
                     {
                         messageStatus += $"{data}\r\n";

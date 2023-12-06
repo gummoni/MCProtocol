@@ -148,6 +148,40 @@ namespace MCProtocol
                         }
                         break;
 
+                    case "CMP":
+                        //一致していたら処理継続、不一致なら処理終了
+                        var is_compare = false;
+                        switch (rows[1])
+                        {
+                            case "R":
+                                is_compare = (plc.R.TryGetValue(int.Parse(rows[2]), out bool rv) && rv) == (rows[3] == "1");
+                                break;
+
+                            case "MR":
+                                is_compare = (plc.MR.TryGetValue(int.Parse(rows[2]), out bool mrv) && mrv) == (rows[3] == "1");
+                                break;
+
+                            case "DM":
+                                is_compare = (plc.DM.TryGetValue(int.Parse(rows[2]), out ushort drv) ? drv : 0) == int.Parse(rows[3]);
+                                break;
+
+                            default:
+                                throw new Exception("未定義の引数です");
+                        }
+
+                        if (is_compare)
+                        {
+                            //一致ならば次へ
+                            yield return true;
+                        }
+                        else
+                        {
+                            //不一致ならば終了
+                            Filenames.Remove(filename);
+                            yield break;
+                        }
+                        break;
+
                     case "WAIT":
                         //ウェイト
                         var waitValue = int.Parse(rows[1]);
