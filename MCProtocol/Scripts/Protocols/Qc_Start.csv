@@ -1,0 +1,8 @@
+;QCモード
+TRIG,MR,4012,1
+
+WAIT,300
+
+CLR,MR,4012
+
+MESG,Qc_Start

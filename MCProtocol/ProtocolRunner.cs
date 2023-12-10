@@ -34,7 +34,6 @@ namespace MCProtocol
                 //設定情報
                 var kin1_cnt = new ushort[] { 0, 0, 0, 0, 0, 0, 0, 0 };
                 var kin1_z1 = new ushort[] { 15001, 15002, 15003, 15004, 15005, 15006, 15007, 15008 };
-                var tip_height = new ushort[] { 0, 0, 0, 0, 0, 0 };
 
                 //プロトコル開始待ち
                 while (!plc.ReadMR(4310))
@@ -90,6 +89,15 @@ namespace MCProtocol
                             ret[11] = 3104;                                         //11:ピペット4装着時大気圧AD値	
                             ret[12] = 3105;                                         //12:ピペット5装着時大気圧AD値	
                             ret[13] = 3106;                                         //13:ピペット6装着時大気圧AD値
+
+                            //DM反映
+                            plc.WriteDM2(724, ret[8]);
+                            plc.WriteDM2(725, ret[9]);
+                            plc.WriteDM2(726, ret[10]);
+                            plc.WriteDM2(727, ret[11]);
+                            plc.WriteDM2(728, ret[12]);
+                            plc.WriteDM2(729, ret[13]);
+
                             break;
 
                         case 4: //"DSPT";"「４」：ピペットチップ廃棄",
@@ -128,13 +136,29 @@ namespace MCProtocol
                             if (Processor.IsRandomMode)
                             {
                                 var rnd = new Random(DateTime.Now.Second);
-                                tip_height[0] = ret[8] = (ushort)(ret[8] + rnd.Next(200) - 100);
-                                tip_height[1] = ret[9] = (ushort)(ret[9] + rnd.Next(200) - 100);
-                                tip_height[2] = ret[10] = (ushort)(ret[10] + rnd.Next(200) - 100);
-                                tip_height[3] = ret[11] = (ushort)(ret[11] + rnd.Next(200) - 100);
-                                tip_height[4] = ret[12] = (ushort)(ret[12] + rnd.Next(200) - 100);
-                                tip_height[5] = ret[13] = (ushort)(ret[13] + rnd.Next(200) - 100);
+                                ret[8] = (ushort)(ret[8] + rnd.Next(200) - 100);
+                                ret[9] = (ushort)(ret[9] + rnd.Next(200) - 100);
+                                ret[10] = (ushort)(ret[10] + rnd.Next(200) - 100);
+                                ret[11] = (ushort)(ret[11] + rnd.Next(200) - 100);
+                                ret[12] = (ushort)(ret[12] + rnd.Next(200) - 100);
+                                ret[13] = (ushort)(ret[13] + rnd.Next(200) - 100);
                             }
+
+                            //DM反映
+                            plc.WriteDM2(636, ret[8]);
+                            plc.WriteDM2(638, ret[9]);
+                            plc.WriteDM2(640, ret[10]);
+                            plc.WriteDM2(642, ret[11]);
+                            plc.WriteDM2(644, ret[12]);
+                            plc.WriteDM2(646, ret[13]);
+
+                            //２重管
+                            plc.WriteDM2(804, ret[8]);
+                            plc.WriteDM2(806, ret[9]);
+                            plc.WriteDM2(808, ret[10]);
+                            plc.WriteDM2(810, ret[11]);
+                            plc.WriteDM2(812, ret[12]);
+                            plc.WriteDM2(814, ret[13]);
                             break;
 
                         case 6: //"NOWA";"「６」：ノズル洗浄",
@@ -181,6 +205,14 @@ namespace MCProtocol
                             ret[12] = (ushort)(11004 + ret[1] * 1000);              //12:使用ノズル4液面高さ	
                             ret[13] = (ushort)(11005 + ret[1] * 1000);              //13:使用ノズル5液面高さ	
                             ret[14] = (ushort)(11006 + ret[1] * 1000);              //14:使用ノズル5液面高さ
+
+                            //DM反映
+                            plc.WriteDM2(622, ret[9]);
+                            plc.WriteDM2(624, ret[10]);
+                            plc.WriteDM2(626, ret[11]);
+                            plc.WriteDM2(628, ret[12]);
+                            plc.WriteDM2(630, ret[13]);
+                            plc.WriteDM2(632, ret[14]);
                             break;
 
                         case 9: //"STRG";"「９」：試薬撹拌",
@@ -218,6 +250,22 @@ namespace MCProtocol
                             ret[12] = (ushort)(z1 + 4);                             //12:ピペット４吸引高さ	
                             ret[13] = (ushort)(z1 + 5);                             //13:ピペット５吸引高さ	
                             ret[14] = (ushort)(z1 + 6);                             //14:ピペット６吸引高さ
+
+                            //DM反映
+                            plc.WriteDM2(608 + sno * 2, kin1_z1[sno]);
+
+                            //吸引回数カウント＋１
+                            var cnt = plc.ReadDM2(816 + sno * 2) + 1;
+                            plc.WriteDM2(816 + sno * 2, cnt);
+
+                            //吸引後大気圧
+                            plc.WriteDM2(730, 2101);
+                            plc.WriteDM2(731, 2102);
+                            plc.WriteDM2(732, 2103);
+                            plc.WriteDM2(733, 2104);
+                            plc.WriteDM2(734, 2105);
+                            plc.WriteDM2(735, 2106);
+
                             break;
 
                         case 11: //"DSRG"; "「11」：試薬吐出",
@@ -239,6 +287,14 @@ namespace MCProtocol
                             ret[13] = 9994;                                         //13:ピペット４吐出高さ	
                             ret[14] = 9995;                                         //14:ピペット５吐出高さ	
                             ret[15] = 9996;                                         //15:ピペット６吐出高さ
+
+                            //DM反映：吐出後大気圧
+                            plc.WriteDM(736, 3001);
+                            plc.WriteDM(737, 3002);
+                            plc.WriteDM(738, 3003);
+                            plc.WriteDM(739, 3004);
+                            plc.WriteDM(740, 3005);
+                            plc.WriteDM(741, 3006);
                             break;
 
                         case 12: //"SDRG"; "「12」：試薬吐出後攪拌",

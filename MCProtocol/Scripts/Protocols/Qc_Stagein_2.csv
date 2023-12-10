@@ -1,0 +1,8 @@
+;QCモード
+TRIG,MR,4103,1
+
+WAIT,300
+
+CLR,MR,4103
+
+MESG,Qc_Stagein_2

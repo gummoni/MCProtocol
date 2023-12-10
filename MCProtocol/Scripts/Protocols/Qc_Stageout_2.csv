@@ -1,0 +1,8 @@
+;QCモード
+TRIG,MR,4101,1
+
+WAIT,300
+
+CLR,MR,4101
+
+MESG,Qc_Stageout_2
