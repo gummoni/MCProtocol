@@ -200,6 +200,8 @@ namespace MCProtocol
                         var resp = DM.GetWord(adr, len);
                         var body = string.Join(" ", resp.Select(_ => _.ToString("X2")));
                         Updatable.AddCommLog($"DM{adr}", $"Read: len={len}, dat={body}");
+                        if (resp.Length != 4)
+                            ;
                         return resp;
                     }
                     break;
