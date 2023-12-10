@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 
@@ -132,6 +133,9 @@ namespace MCProtocol
             res.Add(0x00);                                          //終了コード        9
             res.Add(0x00);
             res.AddRange(dat);                                      //データ追記        10
+
+            var dmp = string.Join(" ", res.Select(_ => $"{_:X2}"));
+            Debug.WriteLine($"RESP:{dmp}");
 
             return res.ToArray();
         }
