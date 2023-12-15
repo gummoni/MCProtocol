@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 
@@ -133,6 +134,9 @@ namespace MCProtocol
             res.Add(0x00);
             res.AddRange(dat);                                      //データ追記        10
 
+            var dmp = string.Join(" ", res.Select(_ => $"{_:X2}"));
+            Debug.WriteLine($"RESP:{dmp}");
+
             return res.ToArray();
         }
 
@@ -200,6 +204,8 @@ namespace MCProtocol
                         var resp = DM.GetWord(adr, len);
                         var body = string.Join(" ", resp.Select(_ => _.ToString("X2")));
                         Updatable.AddCommLog($"DM{adr}", $"Read: len={len}, dat={body}");
+                        if (resp.Length != 4)
+                            ;
                         return resp;
                     }
                     break;
