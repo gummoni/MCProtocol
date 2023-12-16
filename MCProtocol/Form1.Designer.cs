@@ -72,7 +72,7 @@
             HeightRandomCheckBox.AutoSize = true;
             HeightRandomCheckBox.Location = new Point(314, 41);
             HeightRandomCheckBox.Name = "HeightRandomCheckBox";
-            HeightRandomCheckBox.Size = new Size(105, 19);
+            HeightRandomCheckBox.Size = new Size(103, 19);
             HeightRandomCheckBox.TabIndex = 4;
             HeightRandomCheckBox.Text = "高さランダム有効";
             HeightRandomCheckBox.UseVisualStyleBackColor = true;
