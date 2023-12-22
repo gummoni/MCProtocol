@@ -60,21 +60,20 @@ namespace MCProtocol
                     {
                         case 1: //"PVER";"「１」：プロトコルバージョン",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = (ushort)plc.ReadDM2(adr + PROT_ARG3_W2);       // 0:引数3のバージョン数値	
                             ret[1] = (ushort)plc.ReadDM2(adr + PROT_ARG4_W2);       // 1:引数4のバージョン数値	
                             ret[2] = (ushort)plc.ReadDM2(adr + PROT_ARG5_W2);       // 2:引数5のバージョン数値
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 2: //"MVIP";"「２」：原点復帰",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:原点復帰動作時のエラーNo
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 3: //"LOPT";"「３」：ピペットチップ装着",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:ピペットチップ装着時のエラーコード
                             ret[1] = TipNoGet();                                    // 1:使用したチップ位置	
                             ret[2] = 0;                                             // 2:ピペット１エラーNo	
@@ -97,12 +96,11 @@ namespace MCProtocol
                             plc.WriteDM2(727, ret[11]);
                             plc.WriteDM2(728, ret[12]);
                             plc.WriteDM2(729, ret[13]);
-
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 4: //"DSPT";"「４」：ピペットチップ廃棄",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:ピペットチップ廃棄時のエラーコード	
                             ret[1] = TipNoOld;                                      // 1:使用したチップ位置	
                             ret[2] = 0;                                             // 2:ピペット１エラーNo	
@@ -111,12 +109,11 @@ namespace MCProtocol
                             ret[5] = 0;                                             // 5:ピペット4エラーNo	
                             ret[6] = 0;                                             // 6:ピペット5エラーNo	
                             ret[7] = 0;                                             // 7:ピペット6エラーNo
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 5: //"SNPT";"「５」：ノズル先端検知",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
-
                             ret[0] = 0;                                             // 0:ノズル先端検知時のエラーコード	
                             ret[1] = (ushort)plc.ReadDM2(adr + PROT_ARG3_W2);       // 1:引数3のモード	
                             ret[2] = 0;                                             // 2:モード指定ノズル1エラーNo	
@@ -159,11 +156,11 @@ namespace MCProtocol
                             plc.WriteDM2(810, ret[11]);
                             plc.WriteDM2(812, ret[12]);
                             plc.WriteDM2(814, ret[13]);
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 6: //"NOWA";"「６」：ノズル洗浄",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:ノズル洗浄時のエラーコード	
                             ret[1] = (ushort)plc.ReadDM2(adr + PROT_ARG3_W2);       // 1:引数3のモード	
                             ret[2] = 0;                                             // 2:モード指定ノズル1エラーNo	
@@ -172,11 +169,11 @@ namespace MCProtocol
                             ret[5] = 0;                                             // 5:モード指定ノズル4エラーNo	
                             ret[6] = 0;                                             // 6:モード指定ノズル5エラーNo	
                             ret[7] = 0;                                             // 7:モード指定ノズル6エラーNo
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 7: //"NODR";"「７」：ノズル乾燥",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:ノズル乾燥時のエラーコード	
                             ret[1] = (ushort)plc.ReadDM2(adr + PROT_ARG3_W2);       // 1:引数3のモード	
                             ret[2] = 0;                                             // 2:モード指定ノズル1エラーNo	
@@ -185,11 +182,11 @@ namespace MCProtocol
                             ret[5] = 0;                                             // 5:モード指定ノズル4エラーNo	
                             ret[6] = 0;                                             // 6:モード指定ノズル5エラーNo	
                             ret[7] = 0;                                             // 7:モード指定ノズル6エラーNo
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 8: //"LDRG";"「８」：試薬液面検知",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:試薬液面検知時のエラーコード	
                             ret[1] = (ushort)plc.ReadDM2(adr + PROT_ARG3_W2);       // 1:引数3の試薬リザーバ番号
                             ret[2] = (ushort)plc.ReadDM2(adr + PROT_ARG6_W2);       // 2:引数6の使用ノズル指定	
@@ -213,11 +210,11 @@ namespace MCProtocol
                             plc.WriteDM2(628, ret[12]);
                             plc.WriteDM2(630, ret[13]);
                             plc.WriteDM2(632, ret[14]);
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 9: //"STRG";"「９」：試薬撹拌",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:試薬攪拌時のエラーコード	
                             ret[1] = (ushort)plc.ReadDM2(adr + PROT_ARG8_W2);       // 1:引数8の使用ノズル指定	
                             ret[2] = 0;                                             // 2:使用ノズル1エラーコード	
@@ -226,11 +223,11 @@ namespace MCProtocol
                             ret[5] = 0;                                             // 5:使用ノズル4エラーコード	
                             ret[6] = 0;                                             // 6:使用ノズル5エラーコード	
                             ret[7] = 0;                                             // 7:使用ノズル6エラーコード
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 10: //"SCRG"; "「10」：試薬吸引",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:試薬吸引時のエラーコード	
                             ret[1] = (ushort)plc.ReadDM2(adr + PROT_ARG3_W2);       // 1:引数3のリザーバ番号	
                             ret[2] = 0;                                             // 2:ピペット1エラーNo	
@@ -265,12 +262,12 @@ namespace MCProtocol
                             plc.WriteDM2(733, 2104);
                             plc.WriteDM2(734, 2105);
                             plc.WriteDM2(735, 2106);
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
 
                             break;
 
                         case 11: //"DSRG"; "「11」：試薬吐出",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:試薬吐出時のエラーコード	
                             ret[1] = (ushort)plc.ReadDM2(adr + PROT_ARG3_W2);       // 1:引数3のトレイ番号	
                             ret[2] = 0;                                             // 2:トレイ番号にセットされているトレイQR	
@@ -295,11 +292,11 @@ namespace MCProtocol
                             plc.WriteDM(739, 3004);
                             plc.WriteDM(740, 3005);
                             plc.WriteDM(741, 3006);
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 12: //"SDRG"; "「12」：試薬吐出後攪拌",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:試薬吐出後攪拌時のエラーコード	
                             ret[1] = 0;                                             // 1:ピペット1エラーNo	
                             ret[2] = 0;                                             // 2:ピペット2エラーNo	
@@ -311,7 +308,6 @@ namespace MCProtocol
 
                         case 13: //"DCRG"; "「13」：試薬廃液",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:試薬廃液エラーコード	
                             ret[1] = 0;                                             // 1:ピペット1エラーNo	
                             ret[2] = 0;                                             // 2:ピペット2エラーNo	
@@ -319,11 +315,11 @@ namespace MCProtocol
                             ret[4] = 0;                                             // 4:ピペット4エラーNo	
                             ret[5] = 0;                                             // 5:ピペット5エラーNo	
                             ret[6] = 0;                                             // 6:ピペット6エラーNo
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 14: //"WACP"; "「14」：液溜め洗浄",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:液溜め洗浄時のエラーコード	
                             ret[1] = (ushort)plc.ReadDM2(adr + PROT_ARG3_W2);       // 1:引数3のトレイ番号	
                             ret[2] = 0;                                             // 2:トレイ番号にセットされているトレイQR	
@@ -341,11 +337,11 @@ namespace MCProtocol
                             ret[14] = 4;                                            //14:流量センサ値4	
                             ret[15] = 5;                                            //15:流量センサ値5	
                             ret[16] = 6;                                            //16:流量センサ値6
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 15: //"CRL1"; "「15」：液溜め残液制御１",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:液溜め残液制御１（OK1A用）時のエラーコード	
                             ret[1] = (ushort)plc.ReadDM2(adr + PROT_ARG3_W2);       // 1:引数3のトレイ番号	
                             ret[2] = 0;                                             // 2:トレイ番号にセットされているトレイQR	
@@ -357,11 +353,11 @@ namespace MCProtocol
                             ret[8] = 0;                                             // 8:2重管4エラーNo	
                             ret[9] = 0;                                             // 9:2重管5エラーNo	
                             ret[10] = 0;                                            //10:2重管6エラーNo
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 16: //"CRL2"; "「16」：液溜め残液制御２",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:液溜め残液制御２（OK2A用）のエラーコード	
                             ret[1] = 0;                                             // 1:処理しているトレイBCD	
                             ret[2] = (ushort)plc.ReadDM2(adr + PROT_ARG3_W2);       // 2:引数3の処理行	
@@ -371,17 +367,17 @@ namespace MCProtocol
                             ret[6] = 0;                                             // 6:2重管4エラーNo	
                             ret[7] = 0;                                             // 7:2重管5エラーNo	
                             ret[8] = 0;                                             // 8:2重管6エラーNo
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 17: //"STMP"; "「17」：タイムスタンプ",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;     // 0:引数3の20文字
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 18: //"DSPM"; "「18」：ポンプ廃液",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:ポンプ廃液時のエラーNo	
                             ret[1] = (ushort)plc.ReadDM2(adr + PROT_ARG3_W2);       // 1:引数3のタンク番号	
                             ret[2] = 0;                                             // 2:2重管1エラーNo	
@@ -390,6 +386,7 @@ namespace MCProtocol
                             ret[5] = 0;                                             // 5:2重管4エラーNo	
                             ret[6] = 0;                                             // 6:2重管5エラーNo	
                             ret[7] = 0;                                             // 7:2重管6エラーNo
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 19: //"WAIT"; "「19」：タイマ",
@@ -399,7 +396,6 @@ namespace MCProtocol
 
                         case 20: //"SPAR"; "「20」：エア吹付",
                             cur = cur.AddSeconds(5);
-                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             ret[0] = 0;                                             // 0:エア吹付（乾燥）時エラーコード	
                             ret[1] = 0;                                             // 1:2重管1エラーNo	
                             ret[2] = 0;                                             // 2:2重管2エラーNo	
@@ -407,6 +403,7 @@ namespace MCProtocol
                             ret[4] = 0;                                             // 4:2重管4エラーNo	
                             ret[5] = 0;                                             // 5:2重管5エラーNo	
                             ret[6] = 0;                                             // 6:2重管6エラーNo
+                            InnerLogWrite(plc, no, cmd, old, cur, ret);
                             break;
 
                         case 21: //"PCNT"; "「21」：プロトコルファイル継続",
