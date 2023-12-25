@@ -28,9 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            checkedListBox1 = new CheckedListBox();
-            checkedListBox2 = new CheckedListBox();
+            RRegCheckedListBox = new CheckedListBox();
+            MRRegCheckedListBox = new CheckedListBox();
             comboBox1 = new ComboBox();
             label1 = new Label();
             label2 = new Label();
@@ -41,24 +40,26 @@
             DMWriteButton = new Button();
             DMAddressTextBox = new TextBox();
             label5 = new Label();
-            timer1 = new System.Windows.Forms.Timer(components);
+            ReloadButton = new Button();
             SuspendLayout();
             // 
-            // checkedListBox1
+            // RRegCheckedListBox
             // 
-            checkedListBox1.FormattingEnabled = true;
-            checkedListBox1.Location = new Point(12, 31);
-            checkedListBox1.Name = "checkedListBox1";
-            checkedListBox1.Size = new Size(263, 418);
-            checkedListBox1.TabIndex = 0;
+            RRegCheckedListBox.FormattingEnabled = true;
+            RRegCheckedListBox.Location = new Point(12, 31);
+            RRegCheckedListBox.Name = "RRegCheckedListBox";
+            RRegCheckedListBox.Size = new Size(263, 418);
+            RRegCheckedListBox.TabIndex = 0;
+            RRegCheckedListBox.ItemCheck += RRegCheckedListBox_ItemCheck;
             // 
-            // checkedListBox2
+            // MRRegCheckedListBox
             // 
-            checkedListBox2.FormattingEnabled = true;
-            checkedListBox2.Location = new Point(281, 31);
-            checkedListBox2.Name = "checkedListBox2";
-            checkedListBox2.Size = new Size(263, 418);
-            checkedListBox2.TabIndex = 0;
+            MRRegCheckedListBox.FormattingEnabled = true;
+            MRRegCheckedListBox.Location = new Point(281, 31);
+            MRRegCheckedListBox.Name = "MRRegCheckedListBox";
+            MRRegCheckedListBox.Size = new Size(263, 418);
+            MRRegCheckedListBox.TabIndex = 0;
+            MRRegCheckedListBox.ItemCheck += MRRegCheckedListBox_ItemCheck;
             // 
             // comboBox1
             // 
@@ -148,11 +149,15 @@
             label5.TabIndex = 2;
             label5.Text = "DM";
             // 
-            // timer1
+            // ReloadButton
             // 
-            timer1.Enabled = true;
-            timer1.Interval = 1000;
-            timer1.Tick += timer1_Tick;
+            ReloadButton.Location = new Point(550, 396);
+            ReloadButton.Name = "ReloadButton";
+            ReloadButton.Size = new Size(75, 51);
+            ReloadButton.TabIndex = 4;
+            ReloadButton.Text = "更新";
+            ReloadButton.UseVisualStyleBackColor = true;
+            ReloadButton.Click += ReloadButton_Click;
             // 
             // FlagForm
             // 
@@ -160,6 +165,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(838, 459);
             Controls.Add(DMWriteButton);
+            Controls.Add(ReloadButton);
             Controls.Add(DMReadButton);
             Controls.Add(DMAddressTextBox);
             Controls.Add(DMValueTextBox);
@@ -169,8 +175,8 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(comboBox1);
-            Controls.Add(checkedListBox2);
-            Controls.Add(checkedListBox1);
+            Controls.Add(MRRegCheckedListBox);
+            Controls.Add(RRegCheckedListBox);
             Name = "FlagForm";
             Text = "FlagForm";
             ResumeLayout(false);
@@ -179,8 +185,8 @@
 
         #endregion
 
-        private CheckedListBox checkedListBox1;
-        private CheckedListBox checkedListBox2;
+        private CheckedListBox RRegCheckedListBox;
+        private CheckedListBox MRRegCheckedListBox;
         private ComboBox comboBox1;
         private Label label1;
         private Label label2;
@@ -191,6 +197,6 @@
         private Button DMWriteButton;
         private TextBox DMAddressTextBox;
         private Label label5;
-        private System.Windows.Forms.Timer timer1;
+        private Button ReloadButton;
     }
 }

@@ -44,6 +44,7 @@
             LogTextBox = new TextBox();
             tabPage2 = new TabPage();
             StatusTextBox = new TextBox();
+            MemControlButton = new Button();
             panel1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
@@ -56,6 +57,7 @@
             panel1.Controls.Add(UnitTypeCheckBox);
             panel1.Controls.Add(RButton);
             panel1.Controls.Add(MRButton);
+            panel1.Controls.Add(MemControlButton);
             panel1.Controls.Add(DMButton);
             panel1.Controls.Add(ScriptRunButton);
             panel1.Controls.Add(ScriptFolderButton);
@@ -217,6 +219,16 @@
             StatusTextBox.TabIndex = 3;
             StatusTextBox.WordWrap = false;
             // 
+            // MemControlButton
+            // 
+            MemControlButton.Location = new Point(468, 35);
+            MemControlButton.Name = "MemControlButton";
+            MemControlButton.Size = new Size(93, 23);
+            MemControlButton.TabIndex = 3;
+            MemControlButton.Text = "メモリ操作";
+            MemControlButton.UseVisualStyleBackColor = true;
+            MemControlButton.Click += MemControlButton_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -254,5 +266,6 @@
         private TabPage tabPage2;
         private TextBox StatusTextBox;
         private CheckBox HeightRandomCheckBox;
+        private Button MemControlButton;
     }
 }

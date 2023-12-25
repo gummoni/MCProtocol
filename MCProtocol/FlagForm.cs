@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Collections.Concurrent;
 
 namespace MCProtocol
 {
@@ -26,6 +18,7 @@ namespace MCProtocol
         {
             InitializeComponent();
             PLC = plc;
+            ListUpdate();
         }
 
         private void DMReadButton_Click(object sender, EventArgs e)
@@ -34,7 +27,7 @@ namespace MCProtocol
             {
                 if (PLC == null) return;
                 var address = DMAddress;
-                var value = PLC.DM[address];
+                var value = PLC.DM.TryGetValue(address, out ushort _v) ? _v : 0;
                 DMAddressTextBox.Text = $"{value}";
             }
             catch
@@ -58,9 +51,74 @@ namespace MCProtocol
             }
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void ReloadButton_Click(object sender, EventArgs e)
         {
+            ListUpdate();
+        }
 
+        void ListUpdate()
+        {
+            if (PLC == null) return;
+            ListUpdate("R", PLC.R, RRegCheckedListBox);
+            ListUpdate("MR", PLC.MR, MRRegCheckedListBox);
+        }
+
+        static void ListUpdate(string reg, ConcurrentDictionary<int, bool> dic, CheckedListBox listBox)
+        {
+            listBox.SuspendLayout();
+            listBox.Visible = false;
+            listBox.Items.Clear();
+            var keys = dic.Keys.ToList();
+            keys.Sort();
+
+            foreach (var key in keys)
+            {
+                var adr = $"{reg}{key:D5}";
+                var ret = dic[key];
+                var cmt = MemISDic.GetCommentOnly($"{reg}{key}".Trim());
+                listBox.Items.Add($"{adr}:{cmt}", ret);
+            }
+
+            listBox.Visible = true;
+            listBox.ResumeLayout();
+        }
+
+        private void RRegCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (PLC == null) return;
+            if (sender is CheckedListBox listBox)
+            {
+                if (listBox.SelectedItem is string key)
+                {
+                    try
+                    {
+                        var val = e.NewValue == CheckState.Checked;
+                        PLC.WriteR(int.Parse(key.Split(':')[0][2..]), val);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+        }
+
+        private void MRRegCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (PLC == null) return;
+            if (sender is CheckedListBox listBox)
+            {
+                if (listBox.SelectedItem is string key)
+                {
+                    try
+                    {
+                        var val = e.NewValue == CheckState.Checked;
+                        PLC.WriteMR(int.Parse(key.Split(':')[0][2..]), val);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
         }
     }
 }

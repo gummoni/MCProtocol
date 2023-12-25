@@ -491,7 +491,7 @@ namespace MCProtocol
             "DM29399",
         };
 
-        static readonly string[] StatusFilter1A = new[] 
+        static readonly string[] StatusFilter1A = new[]
         {
             "MR2100",   //試薬リザーバ１在荷
             "MR2101",   //試薬リザーバ２在荷
@@ -690,6 +690,11 @@ namespace MCProtocol
         {
             MemISDic.IsOK2AMode = UnitTypeCheckBox.Checked;
             Processor.IsRandomMode = HeightRandomCheckBox.Checked;
+        }
+
+        private void MemControlButton_Click(object sender, EventArgs e)
+        {
+            new FlagForm(PLC).ShowDialog(this);
         }
     }
 }
