@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Plugins\**" />
+    <EmbeddedResource Remove="Plugins\**" />
+    <None Remove="Plugins\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Scripts\Protocols\503_2.csv" />
     <None Remove="Scripts\Protocols\コマンド実行.csv" />
     <None Remove="Scripts\Protocols\ﾌﾟﾛﾄｺﾙ実行.csv" />
@@ -126,10 +132,6 @@
     <None Update="Scripts\Protocols\ﾌﾟﾛﾄｺﾙ実行.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Plugins\" />
   </ItemGroup>
 
   <ItemGroup>
