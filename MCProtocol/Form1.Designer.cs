@@ -33,6 +33,7 @@
             UnitTypeCheckBox = new CheckBox();
             RButton = new Button();
             MRButton = new Button();
+            MemControlButton = new Button();
             DMButton = new Button();
             ScriptRunButton = new Button();
             ScriptFolderButton = new Button();
@@ -44,7 +45,7 @@
             LogTextBox = new TextBox();
             tabPage2 = new TabPage();
             StatusTextBox = new TextBox();
-            MemControlButton = new Button();
+            ResetButton = new Button();
             panel1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
@@ -53,6 +54,7 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(ResetButton);
             panel1.Controls.Add(HeightRandomCheckBox);
             panel1.Controls.Add(UnitTypeCheckBox);
             panel1.Controls.Add(RButton);
@@ -110,6 +112,16 @@
             MRButton.Text = "MR参照";
             MRButton.UseVisualStyleBackColor = true;
             MRButton.Click += MRButton_Click;
+            // 
+            // MemControlButton
+            // 
+            MemControlButton.Location = new Point(468, 35);
+            MemControlButton.Name = "MemControlButton";
+            MemControlButton.Size = new Size(93, 23);
+            MemControlButton.TabIndex = 3;
+            MemControlButton.Text = "メモリ操作";
+            MemControlButton.UseVisualStyleBackColor = true;
+            MemControlButton.Click += MemControlButton_Click;
             // 
             // DMButton
             // 
@@ -219,15 +231,15 @@
             StatusTextBox.TabIndex = 3;
             StatusTextBox.WordWrap = false;
             // 
-            // MemControlButton
+            // ResetButton
             // 
-            MemControlButton.Location = new Point(468, 35);
-            MemControlButton.Name = "MemControlButton";
-            MemControlButton.Size = new Size(93, 23);
-            MemControlButton.TabIndex = 3;
-            MemControlButton.Text = "メモリ操作";
-            MemControlButton.UseVisualStyleBackColor = true;
-            MemControlButton.Click += MemControlButton_Click;
+            ResetButton.Location = new Point(61, 37);
+            ResetButton.Name = "ResetButton";
+            ResetButton.Size = new Size(75, 23);
+            ResetButton.TabIndex = 5;
+            ResetButton.Text = "リセット";
+            ResetButton.UseVisualStyleBackColor = true;
+            ResetButton.Click += ResetButton_Click;
             // 
             // Form1
             // 
@@ -267,5 +279,6 @@
         private TextBox StatusTextBox;
         private CheckBox HeightRandomCheckBox;
         private Button MemControlButton;
+        private Button ResetButton;
     }
 }

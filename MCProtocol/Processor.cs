@@ -263,6 +263,18 @@ namespace MCProtocol
                         //コメント
                         Updatable?.AddCommLog("", $"★{Path.GetFileNameWithoutExtension(filename)}: {rows[1]}");
                         break;
+
+                    case "OK1A":
+                        //OK1Aのみ
+                        if (!MemISDic.IsOK2AMode)
+                            yield return true;
+                        yield break;
+
+                    case "OK2A":
+                        //OK2Aのみ
+                        if (MemISDic.IsOK2AMode)
+                            yield return true;
+                        yield break;
                 }
             }
 

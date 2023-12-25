@@ -13,9 +13,24 @@ namespace MCProtocol
             InitializeComponent();
             PLC = new(5000, this);
             openFileDialog1.InitialDirectory = Path.Combine(Environment.CurrentDirectory, "Scripts");
+            LoadSettings();
 
             Processor.Start(PLC, this);
         }
+
+        void LoadSettings()
+        {
+            try
+            {
+                var lines = File.ReadAllLines("setting.txt");
+                UnitTypeCheckBox.Checked = MemISDic.IsOK2AMode = lines[0] == "1";
+                HeightRandomCheckBox.Checked = Processor.IsRandomMode = lines[1] == "1";
+            }
+            catch
+            {
+            }
+        }
+
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
@@ -690,11 +705,39 @@ namespace MCProtocol
         {
             MemISDic.IsOK2AMode = UnitTypeCheckBox.Checked;
             Processor.IsRandomMode = HeightRandomCheckBox.Checked;
+            File.WriteAllLines("setting.txt", new string[] { MemISDic.IsOK2AMode ? "1" : "0", Processor.IsRandomMode ? "1" : "0" });
         }
 
         private void MemControlButton_Click(object sender, EventArgs e)
         {
             new FlagForm(PLC).ShowDialog(this);
+        }
+
+        private void ResetButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                PLC.DM.Clear();
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                PLC.R.Clear();
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                PLC.MR.Clear();
+            }
+            catch
+            {
+            }
         }
     }
 }
