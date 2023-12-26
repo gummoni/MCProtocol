@@ -39,6 +39,9 @@
     <None Update="Scripts\Commands\OK2A空圧異常.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Scripts\Protocols\init_OK2A.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Scripts\Protocols\Qc_Start.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -102,7 +105,7 @@
     <None Update="Scripts\Protocols\idl.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Scripts\Protocols\init.csv">
+    <None Update="Scripts\Protocols\init_OK1A.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Scripts\Protocols\103.csv">

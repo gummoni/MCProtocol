@@ -15,6 +15,17 @@ namespace MCProtocol
         static bool IsPower = false;
         static IUIUpdatable? Updatable;
 
+        public static void Reset()
+        {
+            try
+            {
+                IgnoreFilenames.Clear();
+            }
+            catch
+            {
+            }
+        }
+
         /// <summary>
         /// 実行
         /// </summary>
@@ -266,15 +277,15 @@ namespace MCProtocol
 
                     case "OK1A":
                         //OK1Aのみ
-                        if (!MemISDic.IsOK2AMode)
-                            yield return true;
-                        yield break;
+                        if (MemISDic.IsOK2AMode)
+                            yield break;
+                        break;
 
                     case "OK2A":
                         //OK2Aのみ
-                        if (MemISDic.IsOK2AMode)
-                            yield return true;
-                        yield break;
+                        if (!MemISDic.IsOK2AMode)
+                            yield break;
+                        break;
                 }
             }
 

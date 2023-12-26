@@ -706,6 +706,7 @@ namespace MCProtocol
             MemISDic.IsOK2AMode = UnitTypeCheckBox.Checked;
             Processor.IsRandomMode = HeightRandomCheckBox.Checked;
             File.WriteAllLines("setting.txt", new string[] { MemISDic.IsOK2AMode ? "1" : "0", Processor.IsRandomMode ? "1" : "0" });
+            ResetButton_Click(sender, e);
         }
 
         private void MemControlButton_Click(object sender, EventArgs e)
@@ -715,6 +716,22 @@ namespace MCProtocol
 
         private void ResetButton_Click(object sender, EventArgs e)
         {
+            try
+            {
+                LogTextBox.Text = "";
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                StatusTextBox.Text = "";
+            }
+            catch
+            {
+            }
+
             try
             {
                 PLC.DM.Clear();
@@ -738,6 +755,7 @@ namespace MCProtocol
             catch
             {
             }
+            Processor.Reset();
         }
     }
 }
