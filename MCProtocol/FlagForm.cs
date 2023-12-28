@@ -7,7 +7,7 @@ namespace MCProtocol
         readonly PLCDevice? PLC;
         private int savedScrollPosition = 0;
         int DMAddress => int.Parse(DMAddressTextBox.Text);
-        ushort DMValue => ushort.Parse(DMValueTextBox.Text);
+        uint DMValue => uint.Parse(DMValueTextBox.Text);
 
         public FlagForm()
         {
@@ -28,7 +28,7 @@ namespace MCProtocol
                 if (PLC == null) return;
                 var address = DMAddress;
                 var value = PLC.DM.TryGetValue(address, out ushort _v) ? _v : 0;
-                DMAddressTextBox.Text = $"{value}";
+                DMValueTextBox.Text = $"{value}";
             }
             catch
             {
@@ -43,7 +43,7 @@ namespace MCProtocol
                 if (PLC == null) return;
                 var address = DMAddress;
                 var value = DMValue;
-                PLC.DM[address] = value;
+                PLC.WriteDM2(address, value);
             }
             catch
             {
