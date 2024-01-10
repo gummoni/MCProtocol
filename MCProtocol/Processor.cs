@@ -243,6 +243,10 @@ namespace MCProtocol
                                 plc.DM[int.Parse(rows[2])] = ushort.Parse(rows[3]);
                                 break;
 
+                            case "DM2":
+                                plc.WriteDM2(int.Parse(rows[2]), uint.Parse(rows[3]));
+                                break;
+
                             default:
                                 throw new Exception("未定義の引数です");
                         }
