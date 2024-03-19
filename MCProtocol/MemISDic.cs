@@ -3725,5 +3725,20 @@ namespace MCProtocol
                 return key;
             }
         }
+
+        public static bool TryGetComment(bool isOk2A, string key, out string value)
+        {
+            var dic = isOk2A ? Dic2A : Dic1A;
+            if (dic.TryGetValue(key, out string? _value))
+            {
+                value = _value ?? "";
+                return true;
+            }
+            else
+            {
+                value = "";
+                return false;
+            }
+        }
     }
 }

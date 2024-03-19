@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
+            ResetButton = new Button();
             HeightRandomCheckBox = new CheckBox();
             UnitTypeCheckBox = new CheckBox();
             RButton = new Button();
@@ -45,7 +46,7 @@
             LogTextBox = new TextBox();
             tabPage2 = new TabPage();
             StatusTextBox = new TextBox();
-            ResetButton = new Button();
+            LogImportButton = new Button();
             panel1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
@@ -59,6 +60,7 @@
             panel1.Controls.Add(UnitTypeCheckBox);
             panel1.Controls.Add(RButton);
             panel1.Controls.Add(MRButton);
+            panel1.Controls.Add(LogImportButton);
             panel1.Controls.Add(MemControlButton);
             panel1.Controls.Add(DMButton);
             panel1.Controls.Add(ScriptRunButton);
@@ -71,12 +73,22 @@
             panel1.Size = new Size(819, 66);
             panel1.TabIndex = 0;
             // 
+            // ResetButton
+            // 
+            ResetButton.Location = new Point(61, 37);
+            ResetButton.Name = "ResetButton";
+            ResetButton.Size = new Size(75, 23);
+            ResetButton.TabIndex = 5;
+            ResetButton.Text = "リセット";
+            ResetButton.UseVisualStyleBackColor = true;
+            ResetButton.Click += ResetButton_Click;
+            // 
             // HeightRandomCheckBox
             // 
             HeightRandomCheckBox.AutoSize = true;
             HeightRandomCheckBox.Location = new Point(314, 41);
             HeightRandomCheckBox.Name = "HeightRandomCheckBox";
-            HeightRandomCheckBox.Size = new Size(105, 19);
+            HeightRandomCheckBox.Size = new Size(103, 19);
             HeightRandomCheckBox.TabIndex = 4;
             HeightRandomCheckBox.Text = "高さランダム有効";
             HeightRandomCheckBox.UseVisualStyleBackColor = true;
@@ -231,15 +243,15 @@
             StatusTextBox.TabIndex = 3;
             StatusTextBox.WordWrap = false;
             // 
-            // ResetButton
+            // LogImportButton
             // 
-            ResetButton.Location = new Point(61, 37);
-            ResetButton.Name = "ResetButton";
-            ResetButton.Size = new Size(75, 23);
-            ResetButton.TabIndex = 5;
-            ResetButton.Text = "リセット";
-            ResetButton.UseVisualStyleBackColor = true;
-            ResetButton.Click += ResetButton_Click;
+            LogImportButton.Location = new Point(666, 34);
+            LogImportButton.Name = "LogImportButton";
+            LogImportButton.Size = new Size(93, 23);
+            LogImportButton.TabIndex = 3;
+            LogImportButton.Text = "ダンプログ取込";
+            LogImportButton.UseVisualStyleBackColor = true;
+            LogImportButton.Click += LogImportButton_Click;
             // 
             // Form1
             // 
@@ -280,5 +292,6 @@
         private CheckBox HeightRandomCheckBox;
         private Button MemControlButton;
         private Button ResetButton;
+        private Button LogImportButton;
     }
 }

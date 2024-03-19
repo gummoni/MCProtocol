@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Text;
 
 namespace MCProtocol
 {
@@ -757,6 +758,45 @@ namespace MCProtocol
             {
             }
             Processor.Reset();
+        }
+
+        private void LogImportButton_Click(object sender, EventArgs e)
+        {
+            using var form = new OpenFileDialog();
+            form.Filter = "*.CSVƒtƒ@ƒCƒ‹|*.csv";
+            if (form.ShowDialog(this) == DialogResult.OK)
+            {
+                var filename = form.FileName;
+                if (File.Exists(filename))
+                {
+                    var isOk2A = UnitTypeCheckBox.Checked;
+                    var lines = File.ReadLines(filename).Select(_ => LogDumpInfo.Parse(isOk2A, _).ToString()).Where(_=> !string.IsNullOrEmpty(_)).ToArray();
+                    var outFilename = $"{filename}.csv";
+                    File.WriteAllLines(outFilename, lines, Encoding.UTF8);
+                }
+            }
+        }
+
+        public class LogDumpInfo
+        {
+            public string Address { get; set; } = "";
+            public string Comment { get; set; } = "";
+            public string Value { get; set; } = "";
+
+            public static LogDumpInfo Parse(bool isOk2A, string line)
+            {
+                var info = new LogDumpInfo();
+                var rows = line.Split(',');
+                info.Address = rows[0];
+                info.Comment = MemISDic.TryGetComment(isOk2A, rows[0], out string? comment) ? comment : "";
+                info.Value = rows[2];
+                return info;
+            }
+
+            public override string ToString()
+            {
+                return $"{Address},{Comment},{Value}";
+            }
         }
     }
 }
